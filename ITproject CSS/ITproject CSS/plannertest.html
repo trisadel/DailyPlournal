@@ -37,6 +37,12 @@
       border-radius: 10px;
       box-shadow: 0 2px 6px rgba(0,0,0,0.1);
     }
+
+    .note-preview {
+    font-size: 1.2rem;
+    margin-top: 0.25rem;
+    }
+
     .controls {
       display: flex;
       justify-content: space-between;
@@ -100,6 +106,10 @@
       display: flex;
       flex-direction: column;
       gap: 2rem;
+      
+
+
+
     }
   </style>
 </head>
@@ -216,17 +226,21 @@
         calendar.appendChild(document.createElement('div'));
       }
 
-      for (let day = 1; day <= totalDays; day++) {
-        const cellDate = new Date(year, month, day);
-        const cellStr = cellDate.toISOString().split('T')[0];
-        const cell = document.createElement('div');
-        cell.className = 'calendar-cell';
-        cell.innerHTML = `<strong>${day}</strong>`;
-        if (cellStr === todayStr) cell.classList.add('today');
-        if (selectedDate === cellStr) cell.classList.add('selected');
-        cell.onclick = () => selectDate(cellStr, cell);
-        calendar.appendChild(cell);
-      }
+          for (let day = 1; day <= totalDays; day++) {
+      const cellDate = new Date(year, month, day);
+      const cellStr = cellDate.toISOString().split('T')[0];
+      const cell = document.createElement('div');
+      cell.className = 'calendar-cell';
+
+      let notePreview = notes[cellStr] ? `<div class="note-preview">📝</div>` : '';
+      cell.innerHTML = `<strong>${day}</strong> ${notePreview}`;
+
+      if (cellStr === todayStr) cell.classList.add('today');
+      if (selectedDate === cellStr) cell.classList.add('selected');
+      cell.onclick = () => selectDate(cellStr, cell);
+      calendar.appendChild(cell);
+    }
+
 
       label.textContent = `${firstDay.toLocaleString('default', { month: 'long' })} ${year}`;
     }
@@ -246,35 +260,44 @@
         calendar.appendChild(header);
       });
 
-      for (let i = 0; i < 7; i++) {
-        const cellDate = new Date(startOfWeek);
-        cellDate.setDate(startOfWeek.getDate() + i);
-        const cellStr = cellDate.toISOString().split('T')[0];
-        const cell = document.createElement('div');
-        cell.className = 'calendar-cell';
-        cell.innerHTML = `<strong>${cellDate.getDate()}</strong>`;
-        if (selectedDate === cellStr) cell.classList.add('selected');
-        cell.onclick = () => selectDate(cellStr, cell);
-        calendar.appendChild(cell);
-      }
+          for (let i = 0; i < 7; i++) {
+      const cellDate = new Date(startOfWeek);
+      cellDate.setDate(startOfWeek.getDate() + i);
+      const cellStr = cellDate.toISOString().split('T')[0];
+      const cell = document.createElement('div');
+      cell.className = 'calendar-cell';
+
+      let notePreview = notes[cellStr] ? `<div class="note-preview">📝</div>` : '';
+      cell.innerHTML = `<strong>${cellDate.getDate()}</strong> ${notePreview}`;
+
+      const today = new Date().toISOString().split('T')[0];
+      if (cellStr === today) cell.classList.add('today');
+      if (selectedDate === cellStr) cell.classList.add('selected');
+      cell.onclick = () => selectDate(cellStr, cell);
+      calendar.appendChild(cell);
+    }
+
 
       label.textContent = `${startOfWeek.toLocaleDateString()} - ${endOfWeek.toLocaleDateString()}`;
     }
 
     // Function to render day view
-    function renderDayView(calendar, label) {
-      const today = new Date();
-      const dateStr = today.toISOString().split('T')[0];
+        function renderDayView(calendar, label) {
+      const dateStr = currentDate.toISOString().split('T')[0];
 
       calendar.innerHTML = `<div class="calendar-header">Today</div>`;
       const cell = document.createElement('div');
       cell.className = 'calendar-cell selected';
-      cell.innerHTML = `<strong>${today.getDate()}</strong>`;
+
+      let notePreview = notes[dateStr] ? `<div class="note-preview">📝 ${notes[dateStr].slice(0, 20)}...</div>` : '';
+      cell.innerHTML = `<strong>${currentDate.getDate()}</strong> ${notePreview}`;
+
       cell.onclick = () => selectDate(dateStr, cell);
       calendar.appendChild(cell);
 
-      label.textContent = today.toLocaleDateString();
+      label.textContent = currentDate.toLocaleDateString();
     }
+
 
     // Get start of week (Sunday)
     function getStartOfWeek(date) {
