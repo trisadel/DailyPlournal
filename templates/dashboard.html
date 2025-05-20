@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<h1>Welcome to your journal, {{ user.username }}!</h1>
+<p>Here's what's happening today:</p>
+
+{# Daily Quote Section #}
+<div class="daily-quote-section">
+    <div class="quote-container">
+        <h1 id="quote-text">"Your daily motivation goes here."</h1>
+        <p id="quote-author">— Author</p>
+        <button onclick="newQuote()">New Quote</button>
+    </div>
+</div>
+
+{# Journal Entries Section #}
+<div class="journal-entries-section">
+    {% for entry in journal_entries %}
+    <div class="journal-entry">
+        <h2>{{ entry.title }}</h2>
+        <p>{{ entry.content }}</p>
+        <small>Posted on: {{ entry.date_posted }}</small>
+        {# Add view/edit/delete buttons if desired, e.g.: #}
+        {# <a href="{{ url_for('view_journal_entry', entry_id=entry.id) }}" class="button">View</a> #}
+    </div>
+    {% endfor %}
+</div>
+
+{# Streak Info Section #}
+<div class="streak-info">
+    Current Streak: {{ current_streak }} days
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }} {# This calls the parent's scripts block #}
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+<script>
+    // Ensure the newQuote function is called when the dashboard loads
+    document.addEventListener('DOMContentLoaded', function() {
+        newQuote();
+    });
+</script>
+{% endblock %}
+
+{% block head %}
+{{ super() }} {# This calls the parent's head block #}
+<link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}"> {# New Dashboard Stylesheet #}
+{% endblock %}

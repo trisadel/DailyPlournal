@@ -1,0 +1,307 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit Journal Entry{% endblock %}
+
+{% block content %}
+<div class="journal-editor">
+    <div class="editor-container">
+        <h1>Edit Journal Entry</h1>
+        <div>
+            <div class="typography-controls">
+                <div class="control-box">
+                    <label for="fontSelect">Font:</label>
+                    <select id="fontSelect">
+                        <option value="Arial, sans-serif">Arial</option>
+                        <option value="'Courier New', monospace">Courier New</option>
+                        <option value="Georgia, serif">Georgia</option>
+                        <option value="'Times New Roman', serif">Times New Roman</option>
+                        <option value="Verdana, sans-serif">Verdana</option>
+                    </select>
+                </div>
+
+                <div class="control-box">
+                    <label for="entryType">Entry Type:</label>
+                    <select id="entryType">
+                        <option value="daily" {% if entry.type == 'daily' %}selected{% endif %}>Daily Reflection</option>
+                        <option value="gratitude" {% if entry.type == 'gratitude' %}selected{% endif %}>Gratitude</option>
+                        <option value="goals" {% if entry.type == 'goals' %}selected{% endif %}>Goals</option>
+                        <option value="dream" {% if entry.type == 'dream' %}selected{% endif %}>Dream Journal</option>
+                        <option value="freewrite" {% if entry.type == 'freewrite' %}selected{% endif %}>Free Write</option>
+                    </select>
+                </div>
+
+                <div class="control-box">
+                    <label for="moodSelect">Mood:</label>
+                    <select id="moodSelect">
+                        <option value="happy" {% if entry.mood == 'happy' %}selected{% endif %}>Happy</option>
+                        <option value="sad" {% if entry.mood == 'sad' %}selected{% endif %}>Sad</option>
+                        <option value="excited" {% if entry.mood == 'excited' %}selected{% endif %}>Excited</option>
+                        <option value="relaxed" {% if entry.mood == 'relaxed' %}selected{% endif %}>Relaxed</option>
+                        <option value="anxious" {% if entry.mood == 'anxious' %}selected{% endif %}>Anxious</option>
+                        <option value="productive" {% if entry.mood == 'productive' %}selected{% endif %}>Productive</option>
+                        <option value="creative" {% if entry.mood == 'creative' %}selected{% endif %}>Creative</option>
+                    </select>
+                </div>
+
+                <div class="control-box">
+                    <label for="fontSize">Font Size:</label>
+                    <input type="number" id="fontSize" value="16" min="12" max="30" step="1">
+                </div>
+
+                <div class="control-box">
+                    <label for="lineHeight">Line Height:</label>
+                    <input type="number" id="lineHeight" value="1.5" min="1.0" max="2.0" step="0.1">
+                </div>
+            </div>
+
+            <div class="input-group">
+                <div class="control-box">
+                    <label for="title">Title:</label>
+                    <input type="text" name="title" id="title" value="{{ entry.title }}" required>
+                </div>
+                <div class="control-box">
+                    <label for="content">Content:</label>
+                    <textarea name="content" id="journalText" rows="10" required>{{ entry.content }}</textarea>
+                </div>
+            </div>
+
+            <div class="sketchpad-section">
+                <h2>Sketch Pad</h2>
+                <div class="sketchpad-controls-top">
+                    <div class="control-box">
+                        <label for="penColor">Pen Color:</label>
+                        <input type="color" id="penColor" value="#000000">
+                    </div>
+                    <div class="control-box">
+                        <label for="penSize">Pen Size:</label>
+                        <input type="range" id="penSize" min="1" max="10" value="2">
+                        <span id="penSizeValue">2</span>
+                    </div>
+                </div>
+                <canvas id="sketchpad" width="600" height="400" style="border: 1px solid #000; background-color: #fff;"></canvas>
+                <div class="sketchpad-controls-bottom">
+                    <button id="clearSketch">Clear</button>
+                    <button id="insertSketch">Insert Sketch into Journal</button>
+                </div>
+            </div>
+            <div class="btn-field">
+                <button type="button" id="updateButton">Update Entry</button>
+                <a href="{{ url_for('view_journal_entry', entry_id=entry.id) }}" class="button">View Entry</a>
+                <a href="{{ url_for('dashboard') }}" class="button">Back to Dashboard</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const titleInput = document.getElementById('title');
+    const textarea = document.getElementById('journalText');
+    const fontSelect = document.getElementById('fontSelect');
+    const fontSizeInput = document.getElementById('fontSize');
+    const lineHeightInput = document.getElementById('lineHeight');
+    const updateButton = document.getElementById('updateButton'); // Changed to updateButton
+
+    // Character Counter (from new_journal.html)
+    const characterCount = document.createElement('div');
+    characterCount.id = 'characterCount';
+    characterCount.style.textAlign = 'right';
+    characterCount.style.color = '#777';
+    document.querySelector('.input-group').insertBefore(characterCount, textarea); // Insert before textarea
+
+    textarea.addEventListener('input', () => {
+        characterCount.textContent = `${textarea.value.length} characters`;
+    });
+    // Initialize character count on load
+    characterCount.textContent = `${textarea.value.length} characters`;
+
+
+    // Typography controls (from new_journal.html)
+    // Apply initial font styles if they were saved (though not currently implemented in backend)
+    // For now, these controls will just affect the textarea visually.
+    fontSelect.addEventListener('change', () => {
+        textarea.style.fontFamily = fontSelect.value;
+    });
+
+    fontSizeInput.addEventListener('input', () => {
+        textarea.style.fontSize = fontSizeInput.value + 'px';
+    });
+
+    lineHeightInput.addEventListener('input', () => {
+        textarea.style.lineHeight = lineHeightInput.value + 'px';
+    });
+
+
+    // Sketchpad Functionality (from new_journal.html)
+    const sketchpad = document.getElementById('sketchpad');
+    const ctx = sketchpad.getContext('2d');
+    const penColor = document.getElementById('penColor');
+    const penSize = document.getElementById('penSize');
+    const penSizeValue = document.getElementById('penSizeValue');
+    const clearSketch = document.getElementById('clearSketch');
+    const insertSketchBtn = document.getElementById('insertSketch');
+
+    let isDrawing = false;
+    ctx.lineWidth = penSize.value;
+    ctx.strokeStyle = penColor.value;
+
+    sketchpad.addEventListener('mousedown', (e) => {
+        isDrawing = true;
+        ctx.beginPath();
+        const rect = sketchpad.getBoundingClientRect();
+        ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
+    });
+
+    sketchpad.addEventListener('mousemove', draw);
+    sketchpad.addEventListener('mouseup', stopDrawing);
+    sketchpad.addEventListener('mouseout', stopDrawing);
+
+    function draw(e) {
+        if (!isDrawing) return;
+        const rect = sketchpad.getBoundingClientRect();
+        ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
+        ctx.stroke();
+    }
+
+    function stopDrawing() {
+        isDrawing = false;
+    }
+
+    penColor.addEventListener('change', () => {
+        ctx.strokeStyle = penColor.value;
+    });
+
+    penSize.addEventListener('input', () => {
+        ctx.lineWidth = penSize.value;
+        penSizeValue.textContent = penSize.value;
+    });
+
+    clearSketch.addEventListener('click', () => {
+        ctx.clearRect(0, 0, sketchpad.width, sketchpad.height);
+    });
+
+    insertSketchBtn.addEventListener('click', () => {
+        const sketchDataURL = sketchpad.toDataURL();
+        const start = textarea.selectionStart;
+        const end = textarea.selectionEnd;
+        const text = textarea.value;
+
+        const placeholder = `[SKETCH_DATA:${sketchDataURL}]`;
+        textarea.value = text.substring(0, start) + placeholder + text.substring(end, text.length);
+
+        ctx.clearRect(0, 0, sketchpad.width, sketchpad.height);
+        textarea.focus();
+        textarea.selectionEnd = start + placeholder.length;
+    });
+
+    // Update Entry Logic using Fetch API (similar to new_journal.html save logic)
+    updateButton.addEventListener('click', () => {
+      const journalText = textarea.value;
+      const title = titleInput.value;
+      const mood = document.getElementById('moodSelect').value;
+      const entryType = document.getElementById('entryType').value;
+
+      fetch("{{ url_for('update_journal_entry_json', entry_id=entry.id) }}", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          title: title,
+          content: journalText, // Send the text with sketch placeholders
+          mood: mood,
+          type: entryType
+         })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if(data.status === 'success') {
+          alert('Journal updated successfully!');
+          window.location.href = "{{ url_for('view_journal_entry', entry_id=entry.id) }}"; // Redirect to view page
+        } else {
+          alert('Failed to update journal: ' + data.message);
+        }
+      })
+      .catch(error => console.error('Error:', error));
+    });
+
+</script>
+
+<style>
+    /* You should ensure your journal.css contains these styles or copy them here */
+    .sketchpad-section {
+        margin-top: 30px;
+        border: 1px solid #ddd;
+        padding: 15px;
+        border-radius: 8px;
+        background-color: #fcfcfc;
+    }
+    .sketchpad-controls-top, .sketchpad-controls-bottom {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 15px;
+        align-items: center;
+    }
+    .sketchpad-controls-bottom {
+        margin-top: 15px;
+    }
+    #sketchpad {
+        display: block;
+        margin: 0 auto;
+        background-color: #fff;
+    }
+    .typography-controls { /* Ensure these styles are consistent */
+        display: flex;
+        gap: 20px;
+        margin-bottom: 20px;
+        align-items: center;
+        flex-wrap: wrap; /* Allow wrapping on smaller screens */
+    }
+    .control-box {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+    .control-box label {
+        margin-right: 8px;
+        font-weight: bold;
+        color: #333;
+        white-space: nowrap; /* Prevent label from wrapping */
+    }
+    .control-box select,
+    .control-box input[type="text"],
+    .control-box input[type="number"] {
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 1em;
+        width: 100%;
+    }
+    .control-box textarea {
+        width: 100%;
+        min-height: 300px;
+        padding: 15px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+    .btn-field {
+        text-align: center;
+        margin-top: 20px;
+    }
+    .btn-field button,
+    .btn-field .button {
+        padding: 10px 20px;
+        border: none;
+        background-color: #007bff;
+        color: white;
+        border-radius: 5px;
+        cursor: pointer;
+        text-decoration: none;
+        margin: 0 10px;
+        display: inline-block;
+    }
+    .btn-field button:hover,
+    .btn-field .button:hover {
+        background-color: #0056b3;
+    }
+</style>
+{% endblock %}

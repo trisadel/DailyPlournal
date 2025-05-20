@@ -1,0 +1,232 @@
+{% extends 'base.html' %}
+
+{% block title %}New Journal Entry{% endblock %}
+
+{% block content %}
+<div class="journal-editor">
+    <div class="editor-container">
+        <div class="typography-controls">
+            <div class="control-box">
+                <label for="fontSelect">Font:</label>
+                <select id="fontSelect">
+                    <option value="Arial, sans-serif">Arial</option>
+                    <option value="'Courier New', monospace">Courier New</option>
+                    <option value="Georgia, serif">Georgia</option>
+                    <option value="'Times New Roman', serif">Times New Roman</option>
+                    <option value="Verdana, sans-serif">Verdana</option>
+                </select>
+            </div>
+
+            <div class="control-box">
+                <label for="entryType">Entry Type:</label>
+                <select id="entryType">
+                    <option value="daily">Daily Reflection</option>
+                    <option value="gratitude">Gratitude</option>
+                    <option value="goals">Goals</option>
+                    <option value="dream">Dream Journal</option>
+                    <option value="freewrite">Free Write</option>
+                </select>
+            </div>
+
+            <div class="control-box">
+                <label for="moodSelect">Mood:</label>
+                <select id="moodSelect">
+                    <option value="happy">Happy</option>
+                    <option value="sad">Sad</option>
+                    <option value="excited">Excited</option>
+                    <option value="relaxed">Relaxed</option>
+                    <option value="anxious">Anxious</option>
+                    <option value="productive">Productive</option>
+                    <option value="creative">Creative</option>
+                </select>
+            </div>
+            
+            <div class="control-box">
+                <label for="fontSize">Font Size:</label>
+                <input type="number" id="fontSize" value="16" min="12" max="30" step="1">
+            </div>
+
+            <div class="control-box">
+                <label for="lineHeight">Line Height:</label>
+                <input type="number" id="lineHeight" value="1.5" min="1.0" max="2.0" step="0.1">
+            </div>
+        </div>
+
+        <div id="characterCount" style="text-align: right; color: #777;">0 characters</div>
+
+        <textarea id="journalText" placeholder="Start writing your journal entry here..." style="width: 100%; min-height: 300px; padding: 15px; border: 1px solid #ccc; border-radius: 5px;"></textarea>
+
+        <div class="sketchpad-section">
+            <h2>Sketch Pad</h2>
+            <div class="sketchpad-controls-top">
+                <div class="control-box">
+                    <label for="penColor">Pen Color:</label>
+                    <input type="color" id="penColor" value="#000000">
+                </div>
+                <div class="control-box">
+                    <label for="penSize">Pen Size:</label>
+                    <input type="range" id="penSize" min="1" max="10" value="2">
+                    <span id="penSizeValue">2</span>
+                </div>
+            </div>
+            <canvas id="sketchpad" width="600" height="400" style="border: 1px solid #000; background-color: #fff;"></canvas>
+            <div class="sketchpad-controls-bottom">
+                <button id="clearSketch">Clear</button>
+                <button id="insertSketch">Insert Sketch into Journal</button>
+            </div>
+        </div>
+        <button id="saveButton">Save Journal</button>
+    </div>
+</div>
+
+<script>
+    const textarea = document.getElementById('journalText');
+    const fontSelect = document.getElementById('fontSelect');
+    const fontSizeInput = document.getElementById('fontSize');
+    const lineHeightInput = document.getElementById('lineHeight');
+    const saveButton = document.getElementById('saveButton');
+
+    // Character Counter
+    const characterCount = document.getElementById('characterCount');
+    textarea.addEventListener('input', () => {
+        characterCount.textContent = `${textarea.value.length} characters`;
+    });
+
+    fontSelect.addEventListener('change', () => {
+        textarea.style.fontFamily = fontSelect.value;
+    });
+
+    fontSizeInput.addEventListener('input', () => {
+        textarea.style.fontSize = fontSizeInput.value + 'px';
+    });
+
+    lineHeightInput.addEventListener('input', () => {
+        textarea.style.lineHeight = lineHeightInput.value + 'px';
+    });
+
+    saveButton.addEventListener('click', () => {
+      const journalText = textarea.value; // Now contains sketch placeholders
+      const fontFamily = fontSelect.value;
+      const fontSize = fontSizeInput.value + 'px';
+      const lineHeight = lineHeightInput.value + 'px';
+      const mood = document.getElementById('moodSelect').value;
+      const entryType = document.getElementById('entryType').value;
+
+      fetch('/journal/new/', { // Note: This route handles both GET and POST for new entry
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          title: 'New Entry', // You might want to add a title input
+          content: journalText, // Send the text with sketch placeholders
+          fontFamily: fontFamily,
+          fontSize: fontSize,
+          lineHeight: lineHeight,
+          mood: mood,
+          type: entryType
+         })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if(data.status === 'success') {
+          alert('Journal saved successfully!');
+          window.location.href = "{{ url_for('dashboard') }}";
+        } else {
+          alert('Failed to save journal: ' + data.message);
+        }
+      })
+      .catch(error => console.error('Error:', error));
+    });
+
+    // Sketchpad Functionality
+    const sketchpad = document.getElementById('sketchpad');
+    const ctx = sketchpad.getContext('2d');
+    const penColor = document.getElementById('penColor');
+    const penSize = document.getElementById('penSize');
+    const penSizeValue = document.getElementById('penSizeValue');
+    const clearSketch = document.getElementById('clearSketch');
+    const insertSketchBtn = document.getElementById('insertSketch'); // Renamed button
+
+    let isDrawing = false;
+    ctx.lineWidth = penSize.value;
+    ctx.strokeStyle = penColor.value;
+
+    sketchpad.addEventListener('mousedown', (e) => {
+        isDrawing = true;
+        ctx.beginPath();
+        const rect = sketchpad.getBoundingClientRect();
+        ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
+    });
+
+    sketchpad.addEventListener('mousemove', draw);
+    sketchpad.addEventListener('mouseup', stopDrawing);
+    sketchpad.addEventListener('mouseout', stopDrawing);
+
+    function draw(e) {
+        if (!isDrawing) return;
+        const rect = sketchpad.getBoundingClientRect();
+        ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
+        ctx.stroke();
+    }
+
+    function stopDrawing() {
+        isDrawing = false;
+    }
+
+    penColor.addEventListener('change', () => {
+        ctx.strokeStyle = penColor.value;
+    });
+
+    penSize.addEventListener('input', () => {
+        ctx.lineWidth = penSize.value;
+        penSizeValue.textContent = penSize.value;
+    });
+
+    clearSketch.addEventListener('click', () => {
+        ctx.clearRect(0, 0, sketchpad.width, sketchpad.height);
+    });
+
+    // New logic to insert sketch into textarea
+    insertSketchBtn.addEventListener('click', () => {
+        const sketchDataURL = sketchpad.toDataURL();
+        const start = textarea.selectionStart;
+        const end = textarea.selectionEnd;
+        const text = textarea.value;
+
+        // Insert a unique placeholder for the sketch data
+        const placeholder = `[SKETCH_DATA:${sketchDataURL}]`;
+        textarea.value = text.substring(0, start) + placeholder + text.substring(end, text.length);
+
+        ctx.clearRect(0, 0, sketchpad.width, sketchpad.height); // Clear sketchpad after inserting
+        textarea.focus(); // Keep focus on textarea
+        textarea.selectionEnd = start + placeholder.length; // Set cursor after inserted text
+    });
+
+</script>
+<style>
+    /* Add/Keep your existing CSS for .sketchpad-section, .sketchpad-controls-top/bottom, #sketchpad */
+    .sketchpad-section {
+        margin-top: 30px;
+        border: 1px solid #ddd;
+        padding: 15px;
+        border-radius: 8px;
+        background-color: #fcfcfc;
+    }
+    .sketchpad-controls-top, .sketchpad-controls-bottom {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 15px;
+        align-items: center;
+    }
+    .sketchpad-controls-bottom {
+        margin-top: 15px;
+    }
+    #sketchpad {
+        display: block;
+        margin: 0 auto;
+        background-color: #fff;
+    }
+    /* Remove any .sticker or .sticker-container CSS as they are no longer used for dynamic placement */
+</style>
+{% endblock %}
