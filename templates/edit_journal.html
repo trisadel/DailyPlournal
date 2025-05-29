@@ -82,7 +82,7 @@
                 <div class="sketchpad-controls-bottom">
                     <button id="clearSketch">Clear</button>
                     <button id="insertSketch">Insert Sketch into Journal</button>
-                    <button onclick="addSticker()" style="margin-top: 1rem;">Use as Sticker</button>
+                    <button id="use-as-sticker-button">Use as Sticker</button>
                     <div id="stickerContainer" style="position: relative; width: 100%; min-height: 300px; margin-top: 1rem;"></div>
                 </div>
             </div>
@@ -293,7 +293,7 @@
       isRotating = false;
     });
 
-    
+
     // Resizing
     let isResizing = false, startX, startY, startWidth, startHeight;
     resizeHandle.addEventListener('mousedown', (e) => {
@@ -337,6 +337,12 @@
 
       document.addEventListener('mousemove', rotateMove);
       document.addEventListener('mouseup', stopRotate);
+    });
+
+        document.getElementById("use-as-sticker-button").addEventListener("click", function () {
+      const canvas = document.getElementById("sketchpadCanvas");
+      const dataURL = canvas.toDataURL();
+      addSticker(dataURL); // Your existing addSticker function
     });
   }
     
