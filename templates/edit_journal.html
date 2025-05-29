@@ -82,6 +82,8 @@
                 <div class="sketchpad-controls-bottom">
                     <button id="clearSketch">Clear</button>
                     <button id="insertSketch">Insert Sketch into Journal</button>
+                    <button onclick="addSticker()" style="margin-top: 1rem;">Use as Sticker</button>
+                    <div id="stickerContainer" style="position: relative; width: 100%; min-height: 300px; margin-top: 1rem;"></div>
                 </div>
             </div>
             <div class="btn-field">
@@ -140,6 +142,7 @@
     const clearSketch = document.getElementById('clearSketch');
     const insertSketchBtn = document.getElementById('insertSketch');
 
+
     let isDrawing = false;
     ctx.lineWidth = penSize.value;
     ctx.strokeStyle = penColor.value;
@@ -191,7 +194,151 @@
         ctx.clearRect(0, 0, sketchpad.width, sketchpad.height);
         textarea.focus();
         textarea.selectionEnd = start + placeholder.length;
+         });
+        function addSticker() {
+    const stickerContainer = document.getElementById('stickerContainer');
+    const dataURL = canvas.toDataURL();
+
+    const wrapper = document.createElement('div');
+    wrapper.className = 'sticker-wrapper';
+    Object.assign(wrapper.style, {
+      position: 'absolute',
+      left: '0px',
+      top: '0px',
+      width: '100px',
+      height: '100px',
+      cursor: 'move',
+      userSelect: 'none',
     });
+
+    const img = document.createElement('img');
+    img.src = dataURL;
+    Object.assign(img.style, {
+      width: '100%',
+      height: '100%',
+      display: 'block',
+      pointerEvents: 'none',
+    });
+
+    const resizeHandle = document.createElement('div');
+    resizeHandle.className = 'resize-handle';
+    Object.assign(resizeHandle.style, {
+      position: 'absolute',
+      right: '0',
+      bottom: '0',
+      width: '12px',
+      height: '12px',
+      background: '#333',
+      cursor: 'nwse-resize',
+    });
+
+    const rotateHandle = document.createElement('div');
+    rotateHandle.className = 'rotate-handle';
+    Object.assign(rotateHandle.style, {
+      position: 'absolute',
+      top: '-20px',
+      left: '50%',
+      transform: 'translateX(-50%)',
+      width: '12px',
+      height: '12px',
+      background: '#555',
+      cursor: 'grab',
+      borderRadius: '50%',
+    });
+
+    const deleteBtn = document.createElement('button');
+    deleteBtn.className = 'delete-button';
+    deleteBtn.innerHTML = '×';
+    Object.assign(deleteBtn.style, {
+      position: 'absolute',
+      top: '-10px',
+      right: '-10px',
+      background: 'red',
+      color: 'white',
+      border: 'none',
+      borderRadius: '50%',
+      width: '20px',
+      height: '20px',
+      cursor: 'pointer',
+    });
+    deleteBtn.onclick = () => wrapper.remove();
+
+    wrapper.appendChild(img);
+    wrapper.appendChild(resizeHandle);
+    wrapper.appendChild(rotateHandle);
+    wrapper.appendChild(deleteBtn);
+    stickerContainer.appendChild(wrapper);
+
+    // Dragging
+    let isDragging = false, dragOffsetX, dragOffsetY;
+    wrapper.addEventListener('mousedown', (e) => {
+      if (![resizeHandle, rotateHandle, deleteBtn].includes(e.target)) {
+        isDragging = true;
+        dragOffsetX = e.offsetX;
+        dragOffsetY = e.offsetY;
+      }
+    });
+
+    document.addEventListener('mousemove', (e) => {
+      if (isDragging) {
+        wrapper.style.left = (e.pageX - stickerContainer.offsetLeft - dragOffsetX) + 'px';
+        wrapper.style.top = (e.pageY - stickerContainer.offsetTop - dragOffsetY) + 'px';
+      }
+    });
+
+    document.addEventListener('mouseup', () => {
+      isDragging = false;
+      isResizing = false;
+      isRotating = false;
+    });
+
+    // Resizing
+    let isResizing = false, startX, startY, startWidth, startHeight;
+    resizeHandle.addEventListener('mousedown', (e) => {
+      e.stopPropagation();
+      isResizing = true;
+      startX = e.clientX;
+      startY = e.clientY;
+      startWidth = wrapper.offsetWidth;
+      startHeight = wrapper.offsetHeight;
+    });
+
+    document.addEventListener('mousemove', (e) => {
+      if (isResizing) {
+        const dx = e.clientX - startX;
+        const dy = e.clientY - startY;
+        wrapper.style.width = (startWidth + dx) + 'px';
+        wrapper.style.height = (startHeight + dy) + 'px';
+      }
+    });
+
+    // Rotating
+    let isRotating = false;
+    rotateHandle.addEventListener('mousedown', (e) => {
+      e.stopPropagation();
+      isRotating = true;
+      const rect = wrapper.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+
+      function rotateMove(ev) {
+        if (!isRotating) return;
+        const angle = Math.atan2(ev.clientY - centerY, ev.clientX - centerX);
+        wrapper.style.transform = `rotate(${angle}rad)`;
+      }
+
+      function stopRotate() {
+        isRotating = false;
+        document.removeEventListener('mousemove', rotateMove);
+        document.removeEventListener('mouseup', stopRotate);
+      }
+
+      document.addEventListener('mousemove', rotateMove);
+      document.addEventListener('mouseup', stopRotate);
+    });
+  }
+    
+
 
     // Update Entry Logic using Fetch API (similar to new_journal.html save logic)
     updateButton.addEventListener('click', () => {
