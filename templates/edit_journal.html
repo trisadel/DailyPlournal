@@ -195,11 +195,12 @@
         textarea.focus();
         textarea.selectionEnd = start + placeholder.length;
          });
-        function addSticker() {
-    const stickerContainer = document.getElementById('stickerContainer');
-    const dataURL = canvas.toDataURL();
 
-    const wrapper = document.createElement('div');
+        function addSticker() {
+  const stickerContainer = document.getElementById('stickerContainer');
+  const dataURL = sketchpad.toDataURL(); // <--- FIXED this line
+
+  const wrapper = document.createElement('div');
     wrapper.className = 'sticker-wrapper';
     Object.assign(wrapper.style, {
       position: 'absolute',
@@ -450,5 +451,15 @@
     .btn-field .button:hover {
         background-color: #0056b3;
     }
+    .sticker-wrapper {
+  position: absolute;
+  box-shadow: 0 0 4px rgba(0,0,0,0.2);
+}
+
+.resize-handle,
+.rotate-handle,
+.delete-button {
+  z-index: 10;
+}
 </style>
 {% endblock %}
