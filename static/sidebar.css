@@ -135,3 +135,24 @@
 .toggle-btn.collapsed {
     left: 70px;
 }
+
+.sidebar-nav li > div,
+.sidebar-nav li > ul {
+    display: block !important;
+}
+
+.sidebar-nav input[type="text"],
+.sidebar-nav input[type="date"] {
+    padding: 6px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 14px;
+    margin-bottom: 8px;
+    background-color: #fff;
+    color: #333;
+}
+
+.sidebar-nav .journal-actions-filters {
+    margin-top: 8px;
+    margin-bottom: 12px;
+}

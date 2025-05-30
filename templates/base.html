@@ -44,9 +44,9 @@
                 </li>
                 <li>
                         <a href="#">Journal Actions</a>
-                        <div style="padding: 5px;">
-                            <input type="text" id="entrySearch" placeholder="Search entries..." style="width: 100%; margin-bottom: 5px;">
-                            <input type="date" id="entryDateFilter" style="width: 100%;">
+                        <div class="journal-actions-filters">
+                        <input type="text" id="entrySearch" placeholder="Search entries...">
+                        <input type="date" id="entryDateFilter">
                         </div>
                         <ul id="entryList">
                             {% if journal_entries %}
@@ -54,7 +54,7 @@
                                     <li>
                                         <a href="{{ url_for('view_journal_entry', entry_id=entry.id) }}"
                                         data-title="{{ entry.title | lower }}"
-                                        data-date="{{ entry.date.strftime('%Y-%m-%d') }}">
+                                        data-date="{{ entry.date.strftime('%Y-%m-%d') }}"
                                             {{ entry.title }} ({{ entry.date.strftime('%Y-%m-%d') }})
                                         </a>
                                     </li>
@@ -194,7 +194,7 @@
 
     searchInput.addEventListener("input", filterEntries);
     dateFilter.addEventListener("input", filterEntries);
-    
+
     </script>
     {% endblock %}
 </body>
