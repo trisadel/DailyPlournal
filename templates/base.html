@@ -53,10 +53,10 @@
                                 {% for entry in journal_entries %}
                                     <li>
                                         <a href="{{ url_for('view_journal_entry', entry_id=entry.id) }}"
-                                        data-title="{{ entry.title | lower }}"
-                                        data-date="{{ entry.date.strftime('%Y-%m-%d') }}"
+                                            data-title="{{ entry.title | lower }}"
+                                            data-date="{{ entry.date.strftime('%Y-%m-%d') }}">
                                             {{ entry.title }} ({{ entry.date.strftime('%Y-%m-%d') }})
-                                        </a>
+                                            </a>
                                     </li>
                                 {% endfor %}
                             {% else %}
