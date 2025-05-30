@@ -73,7 +73,7 @@
             <div class="sketchpad-controls-bottom">
                 <button id="clearSketch">Clear</button>
                 <button id="insertSketch">Insert Sketch into Journal</button>
-                <button onclick="addSticker()" style="margin-top: 1rem;">Use as Sticker</button>
+                <button id="addStickerButton">Use as Sticker</button>
         <div id="stickerContainer" style="position: relative; width: 100%; min-height: 300px; margin-top: 1rem;"></div>
                 </div>
             </div>
@@ -204,8 +204,9 @@
         ctx.clearRect(0, 0, sketchpad.width, sketchpad.height); // Clear sketchpad after inserting
         textarea.focus(); // Keep focus on textarea
         textarea.selectionEnd = start + placeholder.length; // Set cursor after inserted text
+      });
 
-        function addSticker() {
+  function addSticker() {
   const stickerContainer = document.getElementById('stickerContainer');
   const dataURL = sketchpad.toDataURL(); // <--- FIXED this line
 
@@ -347,10 +348,9 @@
       document.addEventListener('mousemove', rotateMove);
       document.addEventListener('mouseup', stopRotate);
     });
-
-        
+     
   }
-    });
+document.getElementById('addStickerButton').addEventListener('click', addSticker);   
 
 </script>
 <style>
