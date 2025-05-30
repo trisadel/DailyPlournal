@@ -45,18 +45,28 @@
                 <li>
                     <a href="{{ url_for('new_journal_entry') }}" id="write-link">Write</a>
                 </li>
-                <li>
-                    <a href="#">Journal Actions</a>
-                    <ul>
-                        {% if journal_entries %}
-                            {% for entry in journal_entries %}
-                                <li><a href="{{ url_for('view_journal_entry', entry_id=entry.id) }}">View</a></li>
+               <li>
+                        <a href="#">Journal Actions</a>
+                        <div class="journal-actions-filters">
+                        <input type="text" id="entrySearch" placeholder="Search entries...">
+                        <input type="date" id="entryDateFilter">
+                        </div>
+                        <ul id="entryList">
+                            {% if journal_entries %}
+                                {% for entry in journal_entries %}
+                                    <li>
+                                        <a href="{{ url_for('view_journal_entry', entry_id=entry.id) }}"
+                                            data-title="{{ entry.title | lower }}"
+                                            data-date="{{ entry.date_posted.strftime('%Y-%m-%d') }}">
+                                             {{ entry.title }} ({{ entry.date_posted.strftime('%Y-%m-%d') }})
+                                            </a>
+                                    </li>
                                 {% endfor %}
-                        {% else %}
-                            <li>No entries yet</li>
-                        {% endif %}
-                    </ul>
-                </li>
+                            {% else %}
+                                <li>No entries yet</li>
+                            {% endif %}
+                        </ul>
+                    </li>
                 <li>
                     <a href="{{ url_for('planner') }}">Planner</a>
                 </li>
@@ -159,6 +169,39 @@
                 const content = document.querySelector('.content');
                 const toggleBtn = document.querySelector('.toggle-btn');
 
+        toggleBtn.addEventListener('click', () => {
+            sidebar.classList.toggle('collapsed');
+            content.classList.toggle('collapsed');
+            toggleBtn.classList.toggle('collapsed');
+        });
+
+        // --- Journal entry filter logic ---
+    const searchInput = document.getElementById("entrySearch");
+    const dateFilter = document.getElementById("entryDateFilter");
+    const entryList = document.getElementById("entryList");
+
+    function filterEntries() {
+        const searchText = searchInput.value.toLowerCase();
+        const filterDate = dateFilter.value;
+
+        Array.from(entryList.getElementsByTagName("li")).forEach((li) => {
+            const link = li.querySelector("a");
+            if (!link) return;
+
+            const title = link.dataset.title || "";
+            const date = link.dataset.date || "";
+
+            const matchesTitle = title.includes(searchText);
+            const matchesDate = !filterDate || date === filterDate;
+
+            li.style.display = matchesTitle && matchesDate ? "" : "none";
+        });
+    }
+
+    searchInput.addEventListener("input", filterEntries);
+    dateFilter.addEventListener("input", filterEntries);
+
+    </script>
                 toggleBtn.addEventListener('click', () => {
                     sidebar.classList.toggle('collapsed');
                     content.classList.toggle('collapsed');
