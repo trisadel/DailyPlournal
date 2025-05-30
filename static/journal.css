@@ -32,6 +32,7 @@
     gap: 20px;
     margin-bottom: 20px;
     align-items: center;
+    align-items: center;
 }
 
 .control-box {
@@ -44,6 +45,7 @@
     margin-right: 8px;
     font-weight: bold;
     color: #333;
+    white-space: nowrap;
 }
 
 .control-box select,
@@ -124,32 +126,92 @@ textarea {
         background-color: #fff; /* Ensure white background for drawing */
     }
     .sticker-container {
-        border: 1px dashed #ccc;
-        min-height: 100px;
-        position: relative; /* Needed for absolute positioning of stickers */
-        margin-top: 20px;
-        padding: 10px;
-    }
-    .sticker {
-        position: absolute; /* Allows dragging */
-        max-width: 150px; /* Limit sticker size */
-        height: auto;
-        border: 1px solid rgba(0,0,0,0.1);
-        box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
-    }
-
-.entry-content {
+    border: 1px dashed #ccc;
+    min-height: 300px; /* Provide some initial space */
+    position: relative; /* Needed for absolute positioning of stickers */
     margin-top: 20px;
-    padding: 15px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
+    padding: 10px;
     background-color: #f9f9f9;
+    border-radius: 8px;
+    overflow: hidden; /* Keep stickers within bounds */
 }
 
-.btn-field .delete-button {
-    background-color: #dc3545; /* Red color for delete */
+.sticker-wrapper {
+    position: absolute;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    cursor: grab;
+    transition: box-shadow 0.1s ease;
+    user-select: none; /* Prevent text selection during drag/resize */
+    touch-action: none; /* For touch devices */
 }
 
-.btn-field .delete-button:hover {
-    background-color: #c82333;
+.sticker-wrapper:hover {
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.sticker-wrapper img {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.resize-handle, .rotate-handle {
+    position: absolute;
+    width: 15px;
+    height: 15px;
+    background: #007bff; /* Blue for handles */
+    border: 1px solid #fff;
+    border-radius: 50%;
+    cursor: nwse-resize; /* For resize handle */
+    z-index: 1; /* Above the sticker image */
+}
+
+.resize-handle {
+    bottom: -7px;
+    right: -7px;
+}
+
+.rotate-handle {
+    top: -7px;
+    left: -7px;
+    cursor: grab; /* For rotate handle */
+    background: #28a745; /* Green for rotate handle */
+}
+
+.delete-button {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    background: #dc3545; /* Red for delete */
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    font-size: 16px;
+    line-height: 1;
+    text-align: center;
+    cursor: pointer;
+    z-index: 2; /* Above other handles */
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.embedded-sticker-wrapper {
+    /* Styles for positioning the sticker image */
+    display: inline-block; /* Allows wrapping like text, but controlled positioning */
+    vertical-align: top;
+    margin: 5px; /* Spacing between stickers */
+    box-sizing: content-box; /* Ensures padding/border don't affect width/height calculations from JS */
+    border: 1px solid #eee; /* Light border for visual separation */
+    box-shadow: 0 0 5px rgba(0,0,0,0.1);
+    border-radius: 4px;
+}
+
+.embedded-sticker-wrapper img {
+    /* Styles for the image itself */
+    display: block;
+    max-width: 100%; /* Ensures image fits within its wrapper */
+    height: auto;
+    border-radius: 4px;
 }

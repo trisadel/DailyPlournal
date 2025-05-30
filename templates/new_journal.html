@@ -5,80 +5,90 @@
 {% block content %}
 <div class="journal-editor">
     <div class="editor-container">
-        <div class="typography-controls">
-            <div class="control-box">
-                <label for="fontSelect">Font:</label>
-                <select id="fontSelect">
-                    <option value="Arial, sans-serif">Arial</option>
-                    <option value="'Courier New', monospace">Courier New</option>
-                    <option value="Georgia, serif">Georgia</option>
-                    <option value="'Times New Roman', serif">Times New Roman</option>
-                    <option value="Verdana, sans-serif">Verdana</option>
-                </select>
-            </div>
-
-            <div class="control-box">
-                <label for="entryType">Entry Type:</label>
-                <select id="entryType">
-                    <option value="daily">Daily Reflection</option>
-                    <option value="gratitude">Gratitude</option>
-                    <option value="goals">Goals</option>
-                    <option value="dream">Dream Journal</option>
-                    <option value="freewrite">Free Write</option>
-                </select>
-            </div>
-
-            <div class="control-box">
-                <label for="moodSelect">Mood:</label>
-                <select id="moodSelect">
-                    <option value="happy">Happy</option>
-                    <option value="sad">Sad</option>
-                    <option value="excited">Excited</option>
-                    <option value="relaxed">Relaxed</option>
-                    <option value="anxious">Anxious</option>
-                    <option value="productive">Productive</option>
-                    <option value="creative">Creative</option>
-                </select>
-            </div>
-            
-            <div class="control-box">
-                <label for="fontSize">Font Size:</label>
-                <input type="number" id="fontSize" value="16" min="12" max="30" step="1">
-            </div>
-
-            <div class="control-box">
-                <label for="lineHeight">Line Height:</label>
-                <input type="number" id="lineHeight" value="1.5" min="1.0" max="2.0" step="0.1">
-            </div>
-        </div>
-
-        <div id="characterCount" style="text-align: right; color: #777;">0 characters</div>
-
-        <textarea id="journalText" placeholder="Start writing your journal entry here..." style="width: 100%; min-height: 300px; padding: 15px; border: 1px solid #ccc; border-radius: 5px;"></textarea>
-
-        <div class="sketchpad-section">
-            <h2>Sketch Pad</h2>
-            <div class="sketchpad-controls-top">
+        <form method="POST" action="{{ url_for('new_journal_entry') }}"> {# Form starts here #}
+            <div class="typography-controls">
                 <div class="control-box">
+                    <label for="fontSelect">Font:</label>
+                    <select id="fontSelect">
+                        <option value="Arial, sans-serif">Arial</option>
+                        <option value="'Courier New', monospace">Courier New</option>
+                        <option value="Georgia, serif">Georgia</option>
+                        <option value="'Times New Roman', serif">Times New Roman</option>
+                        <option value="Verdana, sans-serif">Verdana</option>
+                    </select>
+                </div>
+
+                <div class="control-box">
+                    <label for="entryType">Entry Type:</label>
+                    <select id="entryType" name="type"> {# This needs to be inside the form #}
+                        <option value="daily">Daily Reflection</option>
+                        <option value="gratitude">Gratitude</option>
+                        <option value="goals">Goals</option>
+                        <option value="dream">Dream Journal</option>
+                        <option value="freewrite">Free Write</option>
+                    </select>
+                </div>
+
+                <div class="control-box">
+                    <label for="moodSelect">Mood:</label>
+                    <select id="moodSelect" name="mood"> {# This needs to be inside the form #}
+                        <option value="">No Mood</option>
+                        <option value="happy">Happy</option>
+                        <option value="sad">Sad</option>
+                        <option value="angry">Angry</option>
+                        <option value="calm">Calm</option>
+                        <option value="excited">Excited</option>
+                        <option value="stressed">Stressed</option>
+                    </select>
+                </div>
+
+                <div class="control-box">
+                    <label for="fontSize">Font Size:</label>
+                    <input type="number" id="fontSize" value="16" min="8" max="72">
+                </div>
+
+                <div class="control-box">
+                    <label for="lineHeight">Line Height:</label>
+                    <input type="number" id="lineHeight" value="24" min="12" max="100">
+                </div>
+
+            </div>
+
+            <div class="control-box">
+                    <label for="datePosted">Entry Date:</label>
+                    <input type="date" id="datePosted" name="date_posted" required> {# This needs to be inside the form #}
+            </div>
+            <div class="char-count" id="charCount">0 characters</div>
+
+            <input type="text" name="title" placeholder="Entry Title" required>
+            <textarea id="journalText" name="content" placeholder="Start writing..." rows="10"></textarea>
+
+            <div class="sketchpad-section">
+                <h3>Sketchpad</h3>
+                <div class="sketchpad-controls-top">
                     <label for="penColor">Pen Color:</label>
                     <input type="color" id="penColor" value="#000000">
-                </div>
-                <div class="control-box">
                     <label for="penSize">Pen Size:</label>
                     <input type="range" id="penSize" min="1" max="10" value="2">
                     <span id="penSizeValue">2</span>
                 </div>
-            </div>
-            <canvas id="sketchpad" width="600" height="400" style="border: 1px solid #000; background-color: #fff;"></canvas>
-            <div class="sketchpad-controls-bottom">
-                <button id="clearSketch">Clear</button>
-                <button id="insertSketch">Insert Sketch into Journal</button>
-                <button id="addStickerButton">Use as Sticker</button>
-        <div id="stickerContainer" style="position: relative; width: 100%; min-height: 300px; margin-top: 1rem;"></div>
+                <canvas id="sketchpad" width="600" height="300" style="border:1px solid #ccc; background:white;"></canvas>
+                <div class="sketchpad-controls-bottom">
+                    <button type="button" id="clearSketch">Clear Sketch</button>
+                    <button type="button" id="insertSketchBtn">Insert Sketch into Journal</button>
+                    <button type="button" id="addStickerBtn">Use as Sticker</button>
                 </div>
             </div>
-        </div>
-        <button id="saveButton">Save Journal</button>
+
+            <div class="sticker-container" id="stickerContainer">
+                <h3>Interactive Stickers</h3>
+                <p>Add sketches as draggable, resizable, rotatable stickers here.</p>
+            </div>
+
+            <div class="btn-field">
+                <button type="submit">Save Entry</button>
+            </div>
+        </form> {# Form ends here #}
     </div>
 </div>
 
@@ -87,14 +97,19 @@
     const fontSelect = document.getElementById('fontSelect');
     const fontSizeInput = document.getElementById('fontSize');
     const lineHeightInput = document.getElementById('lineHeight');
-    const saveButton = document.getElementById('saveButton');
+    const charCount = document.getElementById('charCount');
+    const datePostedInput = document.getElementById('datePosted');
 
-    // Character Counter
-    const characterCount = document.getElementById('characterCount');
-    textarea.addEventListener('input', () => {
-        characterCount.textContent = `${textarea.value.length} characters`;
-    });
+    // Set default date to today's date if not already set by Flask
+        if (!datePostedInput.value) {
+            const today = new Date();
+            const yyyy = today.getFullYear();
+            const mm = String(today.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
+            const dd = String(today.getDate()).padStart(2, '0');
+            datePostedInput.value = `${yyyy}-${mm}-${dd}`;
+        }
 
+    // Typography
     fontSelect.addEventListener('change', () => {
         textarea.style.fontFamily = fontSelect.value;
     });
@@ -107,75 +122,53 @@
         textarea.style.lineHeight = lineHeightInput.value + 'px';
     });
 
-    saveButton.addEventListener('click', () => {
-      const journalText = textarea.value; // Now contains sketch placeholders
-      const fontFamily = fontSelect.value;
-      const fontSize = fontSizeInput.value + 'px';
-      const lineHeight = lineHeightInput.value + 'px';
-      const mood = document.getElementById('moodSelect').value;
-      const entryType = document.getElementById('entryType').value;
-
-      fetch('/journal/new/', { // Note: This route handles both GET and POST for new entry
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          title: 'New Entry', // You might want to add a title input
-          content: journalText, // Send the text with sketch placeholders
-          fontFamily: fontFamily,
-          fontSize: fontSize,
-          lineHeight: lineHeight,
-          mood: mood,
-          type: entryType
-         })
-      })
-      .then(response => response.json())
-      .then(data => {
-        if(data.status === 'success') {
-          alert('Journal saved successfully!');
-          window.location.href = "{{ url_for('dashboard') }}";
-        } else {
-          alert('Failed to save journal: ' + data.message);
-        }
-      })
-      .catch(error => console.error('Error:', error));
+    // Character count
+    textarea.addEventListener('input', () => {
+        charCount.textContent = textarea.value.length + ' characters';
     });
+</script>
 
-    // Sketchpad Functionality
+<script>
+    // Sketchpad drawing logic
     const sketchpad = document.getElementById('sketchpad');
     const ctx = sketchpad.getContext('2d');
+    let isDrawing = false;
+
     const penColor = document.getElementById('penColor');
     const penSize = document.getElementById('penSize');
     const penSizeValue = document.getElementById('penSizeValue');
     const clearSketch = document.getElementById('clearSketch');
-    const insertSketchBtn = document.getElementById('insertSketch'); // Renamed button
+    const insertSketchBtn = document.getElementById('insertSketchBtn');
+    const addStickerBtn = document.getElementById('addStickerBtn'); // New button
 
-    let isDrawing = false;
-    ctx.lineWidth = penSize.value;
+    // Set initial pen style
     ctx.strokeStyle = penColor.value;
+    ctx.lineWidth = penSize.value;
+    ctx.lineCap = 'round';
 
     sketchpad.addEventListener('mousedown', (e) => {
         isDrawing = true;
-        ctx.beginPath();
         const rect = sketchpad.getBoundingClientRect();
+        ctx.beginPath();
         ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
     });
 
-    sketchpad.addEventListener('mousemove', draw);
-    sketchpad.addEventListener('mouseup', stopDrawing);
-    sketchpad.addEventListener('mouseout', stopDrawing);
-
-    function draw(e) {
+    sketchpad.addEventListener('mousemove', (e) => {
         if (!isDrawing) return;
         const rect = sketchpad.getBoundingClientRect();
         ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
+        ctx.strokeStyle = penColor.value; // Ensure current color is used
+        ctx.lineWidth = penSize.value;   // Ensure current size is used
         ctx.stroke();
-    }
+    });
 
-    function stopDrawing() {
+    sketchpad.addEventListener('mouseup', () => {
         isDrawing = false;
-    }
+    });
+
+    sketchpad.addEventListener('mouseleave', () => {
+        isDrawing = false;
+    });
 
     penColor.addEventListener('change', () => {
         ctx.strokeStyle = penColor.value;
@@ -190,192 +183,199 @@
         ctx.clearRect(0, 0, sketchpad.width, sketchpad.height);
     });
 
-    // New logic to insert sketch into textarea
+    // Existing logic to insert sketch into textarea
     insertSketchBtn.addEventListener('click', () => {
         const sketchDataURL = sketchpad.toDataURL();
         const start = textarea.selectionStart;
         const end = textarea.selectionEnd;
         const text = textarea.value;
 
-        // Insert a unique placeholder for the sketch data
-        const placeholder = `[SKETCH_DATA:${sketchDataURL}]`;
+        // Embed sketch data with default properties as a JSON string
+        const sketchPayload = {
+            url: sketchDataURL,
+            width: sketchpad.width + 'px',
+            height: sketchpad.height + 'px',
+            rotation: '0deg'
+        };
+        const placeholder = `[SKETCH_DATA:${JSON.stringify(sketchPayload)}]`;
+
         textarea.value = text.substring(0, start) + placeholder + text.substring(end, text.length);
 
-        ctx.clearRect(0, 0, sketchpad.width, sketchpad.height); // Clear sketchpad after inserting
-        textarea.focus(); // Keep focus on textarea
-        textarea.selectionEnd = start + placeholder.length; // Set cursor after inserted text
-      });
-
-  function addSticker() {
-  const stickerContainer = document.getElementById('stickerContainer');
-  const dataURL = sketchpad.toDataURL(); // <--- FIXED this line
-
-  const wrapper = document.createElement('div');
-    wrapper.className = 'sticker-wrapper';
-    Object.assign(wrapper.style, {
-      position: 'absolute',
-      left: '0px',
-      top: '0px',
-      width: '100px',
-      height: '100px',
-      cursor: 'move',
-      userSelect: 'none',
+        textarea.focus();
+        textarea.selectionEnd = start + placeholder.length;
     });
 
-    const img = document.createElement('img');
-    img.src = dataURL;
-    Object.assign(img.style, {
-      width: '100%',
-      height: '100%',
-      display: 'block',
-      pointerEvents: 'none',
+    // New logic to add sketch as an interactive sticker
+    addStickerBtn.addEventListener('click', () => {
+        const stickerContainer = document.getElementById('stickerContainer');
+        const dataURL = sketchpad.toDataURL();
+
+        if (dataURL === sketchpad.toDataURL('image/png', 0) && sketchpad.width > 0 && sketchpad.height > 0) {
+            alert('Sketchpad is empty! Please draw something first.');
+            return;
+        }
+
+        const wrapper = document.createElement('div');
+        wrapper.className = 'sticker-wrapper';
+        wrapper.style.left = '0px';
+        wrapper.style.top = '0px';
+        wrapper.style.width = '100px';
+        wrapper.style.height = '100px';
+        wrapper.style.position = 'absolute';
+        wrapper.dataset.dataUrl = dataURL;
+
+        const img = document.createElement('img');
+        img.src = dataURL;
+        img.style.width = '100%';
+        img.style.height = '100%';
+        img.style.display = 'block';
+        img.style.pointerEvents = 'none';
+
+        // Create handles
+        const resizeHandle = document.createElement('div');
+        resizeHandle.className = 'resize-handle';
+
+        const rotateHandle = document.createElement('div');
+        rotateHandle.className = 'rotate-handle';
+
+        const deleteBtn = document.createElement('button');
+        deleteBtn.className = 'delete-button';
+        deleteBtn.innerHTML = '&times;';
+        deleteBtn.onclick = (e) => {
+            e.stopPropagation();
+            wrapper.remove();
+        };
+
+        wrapper.appendChild(img);
+        wrapper.appendChild(resizeHandle);
+        wrapper.appendChild(rotateHandle);
+        wrapper.appendChild(deleteBtn);
+        stickerContainer.appendChild(wrapper);
+
+        // Dragging
+        let isDragging = false, dragOffsetX, dragOffsetY;
+        wrapper.addEventListener('mousedown', (e) => {
+            if (e.target === wrapper || e.target === img) {
+                isDragging = true;
+                dragOffsetX = e.clientX - wrapper.getBoundingClientRect().left;
+                dragOffsetY = e.clientY - wrapper.getBoundingClientRect().top;
+                wrapper.style.cursor = 'grabbing';
+            }
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (isDragging) {
+                const containerRect = stickerContainer.getBoundingClientRect();
+                let newLeft = e.clientX - containerRect.left - dragOffsetX;
+                let newTop = e.clientY - containerRect.top - dragOffsetY;
+
+                newLeft = Math.max(0, Math.min(newLeft, containerRect.width - wrapper.offsetWidth));
+                newTop = Math.max(0, Math.min(newTop, containerRect.height - wrapper.offsetHeight));
+
+
+                wrapper.style.left = newLeft + 'px';
+                wrapper.style.top = newTop + 'px';
+            }
+        });
+
+        document.addEventListener('mouseup', () => {
+            isDragging = false;
+            wrapper.style.cursor = 'grab';
+        });
+
+        // Resizing
+        let isResizing = false, startX, startY, startWidth, startHeight;
+        resizeHandle.addEventListener('mousedown', (e) => {
+            e.stopPropagation();
+            isResizing = true;
+            startX = e.clientX;
+            startY = e.clientY;
+            startWidth = wrapper.offsetWidth;
+            startHeight = wrapper.offsetHeight;
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (isResizing) {
+                const dx = e.clientX - startX;
+                const dy = e.clientY - startY;
+                wrapper.style.width = Math.max(20, startWidth + dx) + 'px';
+                wrapper.style.height = Math.max(20, startHeight + dy) + 'px';
+            }
+        });
+
+        // Rotating
+        let isRotating = false;
+        rotateHandle.addEventListener('mousedown', (e) => {
+            e.stopPropagation();
+            isRotating = true;
+            const rect = wrapper.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+
+            function rotateMove(ev) {
+                if (!isRotating) return;
+                const angle = Math.atan2(ev.clientY - centerY, ev.clientX - centerX);
+                wrapper.style.transform = `rotate(${angle}rad)`;
+            }
+
+            function stopRotate() {
+                isRotating = false;
+                document.removeEventListener('mousemove', rotateMove);
+                document.removeEventListener('mouseup', stopRotate);
+            }
+
+            document.addEventListener('mousemove', rotateMove);
+            document.addEventListener('mouseup', stopRotate);
+        });
+
+        ctx.clearRect(0, 0, sketchpad.width, sketchpad.height);
+        textarea.focus();
     });
 
-    const resizeHandle = document.createElement('div');
-    resizeHandle.className = 'resize-handle';
-    Object.assign(resizeHandle.style, {
-      position: 'absolute',
-      right: '0',
-      bottom: '0',
-      width: '12px',
-      height: '12px',
-      background: '#333',
-      cursor: 'nwse-resize',
-    });
+    function collectAndReplaceDynamicContent(event) {
+        let currentJournalText = textarea.value;
 
-    const rotateHandle = document.createElement('div');
-    rotateHandle.className = 'rotate-handle';
-    Object.assign(rotateHandle.style, {
-      position: 'absolute',
-      top: '-20px',
-      left: '50%',
-      transform: 'translateX(-50%)',
-      width: '12px',
-      height: '12px',
-      background: '#555',
-      cursor: 'grab',
-      borderRadius: '50%',
-    });
+        const oldStickerRegex = /\\[STICKER_DATA:({.*?})\\]/g;
+        currentJournalText = currentJournalText.replace(oldStickerRegex, '');
 
-    const deleteBtn = document.createElement('button');
-    deleteBtn.className = 'delete-button';
-    deleteBtn.innerHTML = '×';
-    Object.assign(deleteBtn.style, {
-      position: 'absolute',
-      top: '-10px',
-      right: '-10px',
-      background: 'red',
-      color: 'white',
-      border: 'none',
-      borderRadius: '50%',
-      width: '20px',
-      height: '20px',
-      cursor: 'pointer',
-    });
-    deleteBtn.onclick = () => wrapper.remove();
+        const stickerWrappers = document.querySelectorAll('#stickerContainer .sticker-wrapper');
+        let stickerDataStrings = [];
 
-    wrapper.appendChild(img);
-    wrapper.appendChild(resizeHandle);
-    wrapper.appendChild(rotateHandle);
-    wrapper.appendChild(deleteBtn);
-    stickerContainer.appendChild(wrapper);
+        stickerWrappers.forEach(wrapper => {
+            const dataUrl = wrapper.dataset.dataUrl;
+            const currentTransform = window.getComputedStyle(wrapper).transform;
 
-    // Dragging
-    let isDragging = false, dragOffsetX, dragOffsetY;
-    wrapper.addEventListener('mousedown', (e) => {
-      if (![resizeHandle, rotateHandle, deleteBtn].includes(e.target)) {
-        isDragging = true;
-        dragOffsetX = e.offsetX;
-        dragOffsetY = e.offsetY;
-      }
-    });
+            let rotationAngle = '0deg';
+            if (currentTransform && currentTransform !== 'none') {
+                if (currentTransform.includes('rotate(')) {
+                    rotationAngle = currentTransform.match(/rotate\((.*?)\)/)[1];
+                } else if (currentTransform.includes('matrix')) {
+                    const matrix = currentTransform.match(/matrix.*\((.+)\)/);
+                    if (matrix) {
+                        const values = matrix[1].split(', ').map(Number);
+                        const a = values[0];
+                        const b = values[1];
+                        const angleRad = Math.atan2(b, a);
+                        rotationAngle = `${angleRad}rad`;
+                    }
+                }
+            }
 
-    document.addEventListener('mousemove', (e) => {
-      if (isDragging) {
-        wrapper.style.left = (e.pageX - stickerContainer.offsetLeft - dragOffsetX) + 'px';
-        wrapper.style.top = (e.pageY - stickerContainer.offsetTop - dragOffsetY) + 'px';
-      }
-    });
+            const stickerData = {
+                url: dataUrl,
+                left: wrapper.style.left,
+                top: wrapper.style.top,
+                width: wrapper.style.width,
+                height: wrapper.style.height,
+                rotation: rotationAngle
+            };
+            stickerDataStrings.push(`[STICKER_DATA:${JSON.stringify(stickerData)}]`);
+        });
 
-    document.addEventListener('mouseup', () => {
-      isDragging = false;
-      isResizing = false;
-      isRotating = false;
-    });
+        textarea.value = currentJournalText + stickerDataStrings.join('');
+    }
 
-
-    // Resizing
-    let isResizing = false, startX, startY, startWidth, startHeight;
-    resizeHandle.addEventListener('mousedown', (e) => {
-      e.stopPropagation();
-      isResizing = true;
-      startX = e.clientX;
-      startY = e.clientY;
-      startWidth = wrapper.offsetWidth;
-      startHeight = wrapper.offsetHeight;
-    });
-
-    document.addEventListener('mousemove', (e) => {
-      if (isResizing) {
-        const dx = e.clientX - startX;
-        const dy = e.clientY - startY;
-        wrapper.style.width = (startWidth + dx) + 'px';
-        wrapper.style.height = (startHeight + dy) + 'px';
-      }
-    });
-
-    // Rotating
-    let isRotating = false;
-    rotateHandle.addEventListener('mousedown', (e) => {
-      e.stopPropagation();
-      isRotating = true;
-      const rect = wrapper.getBoundingClientRect();
-      const centerX = rect.left + rect.width / 2;
-      const centerY = rect.top + rect.height / 2;
-
-      function rotateMove(ev) {
-        if (!isRotating) return;
-        const angle = Math.atan2(ev.clientY - centerY, ev.clientX - centerX);
-        wrapper.style.transform = `rotate(${angle}rad)`;
-      }
-
-      function stopRotate() {
-        isRotating = false;
-        document.removeEventListener('mousemove', rotateMove);
-        document.removeEventListener('mouseup', stopRotate);
-      }
-
-      document.addEventListener('mousemove', rotateMove);
-      document.addEventListener('mouseup', stopRotate);
-    });
-     
-  }
-document.getElementById('addStickerButton').addEventListener('click', addSticker);   
+    document.querySelector('form').addEventListener('submit', collectAndReplaceDynamicContent);
 
 </script>
-<style>
-    /* Add/Keep your existing CSS for .sketchpad-section, .sketchpad-controls-top/bottom, #sketchpad */
-    .sketchpad-section {
-        margin-top: 30px;
-        border: 1px solid #ddd;
-        padding: 15px;
-        border-radius: 8px;
-        background-color: #fcfcfc;
-    }
-    .sketchpad-controls-top, .sketchpad-controls-bottom {
-        display: flex;
-        gap: 15px;
-        margin-bottom: 15px;
-        align-items: center;
-    }
-    .sketchpad-controls-bottom {
-        margin-top: 15px;
-    }
-    #sketchpad {
-        display: block;
-        margin: 0 auto;
-        background-color: #fff;
-    }
-    /* Remove any .sticker or .sticker-container CSS as they are no longer used for dynamic placement */
-</style>
 {% endblock %}
