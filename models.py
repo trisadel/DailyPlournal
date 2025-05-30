@@ -16,7 +16,10 @@ class User(db.Model):
     journals = db.relationship('JournalEntry', backref='author', lazy=True)
     streak = db.relationship('Streak', backref='user', uselist=False)
     templates = db.relationship('Template', backref='user', lazy=True)
-
+    notes = db.relationship('Note', backref='user', lazy=True)
+    habits = db.relationship('Habit', backref='user', lazy=True)
+    habit_statuses = db.relationship('HabitStatus', backref='user', lazy=True)
+    custom_sections = db.relationship('CustomSection', backref='user', lazy=True)
 
 class JournalEntry(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -30,7 +33,6 @@ class JournalEntry(db.Model):
 
     # New fields
     mood = db.Column(db.String(50), nullable=True)  # Add mood
-    sketch_data = db.Column(db.Text, nullable=True)  # Add sketch_data
 
 
 class Streak(db.Model):
@@ -46,3 +48,46 @@ class Template(db.Model):
     name = db.Column(db.String(100), nullable=False)
     content = db.Column(db.Text, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+
+class Note(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    date = db.Column(db.Date, nullable=False)
+    content = db.Column(db.Text, nullable=False)
+    __table_args__ = (db.UniqueConstraint('user_id', 'date', name='_user_date_note_uc'),)
+
+
+class Habit(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    name = db.Column(db.String(100), nullable=False)
+    __table_args__ = (db.UniqueConstraint('user_id', 'name', name='_user_name_habit_uc'),)
+
+
+class HabitStatus(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    habit_id = db.Column(db.Integer, db.ForeignKey('habit.id'), nullable=False)
+    date = db.Column(db.Date, nullable=False)
+    completed = db.Column(db.Boolean, default=False)
+    habit = db.relationship('Habit', backref=db.backref('statuses', lazy=True))
+    __table_args__ = (db.UniqueConstraint('habit_id', 'date', name='_habit_date_status_uc'),)
+
+
+class CustomSectionType(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    name = db.Column(db.String(100), nullable=False)
+    # 'text' or 'time'
+    type = db.Column(db.String(50), nullable=False)
+    __table_args__ = (db.UniqueConstraint('user_id', 'name', name='_user_name_custom_section_type_uc'),)
+
+
+class CustomSection(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    date = db.Column(db.Date, nullable=False)
+    name = db.Column(db.String(100), nullable=False) # Name of the section (e.g., "Daily Goals")
+    type = db.Column(db.String(50), nullable=False) # 'text' or 'time'
+    content = db.Column(db.Text, nullable=True) # Stores text content or JSON string for time slots
+    __table_args__ = (db.UniqueConstraint('user_id', 'date', 'name', name='_user_date_name_custom_section_uc'),)

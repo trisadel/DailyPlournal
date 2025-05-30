@@ -18,7 +18,10 @@
 
 <body>
     <div class="sidebar">
-        <div class="sidebar-logo">DailyPlournal</div>
+        <div class="sidebar-logo">
+            <img src="{{ url_for('static', filename='img/logo.png') }}" alt="DailyPlournal Logo" style="height: 40px; margin-right: 10px; vertical-align: middle;">
+            DailyPlournal
+        </div>
 
         <div class="profile-section">
             <a href="{{ url_for('profile') }}" class="profile-link">
@@ -102,66 +105,69 @@
     </div>
     <div class="background" id="fixedStarsContainer"></div>
 
+    {# This is the main scripts block #}
     {% block scripts %}
-    <script>
-        const musicPlayerFixed = document.getElementById("musicPlayerFixed");
-        const fixedEmbed = document.getElementById("fixed_spotifyEmbed");
-        const fixedSelect = document.getElementById("fixed_playlist");
-        const fixedToggle = document.getElementById("fixed_themeToggle");
-        const body = document.body;
-        const fixedStarsContainer = document.getElementById("fixedStarsContainer");
-        const dragHandle = document.querySelector('.drag-handle'); // Get the drag handle
+        {# This is a nested block specifically for base-level scripts #}
+        {% block base_scripts %}
+            <script>
+                const musicPlayerFixed = document.getElementById("musicPlayerFixed");
+                const fixedEmbed = document.getElementById("fixed_spotifyEmbed");
+                const fixedSelect = document.getElementById("fixed_playlist");
+                const fixedToggle = document.getElementById("fixed_themeToggle");
+                const body = document.body;
+                const fixedStarsContainer = document.getElementById("fixedStarsContainer");
+                const dragHandle = document.querySelector('.drag-handle'); // Get the drag handle
 
-        let isDragging = false;
-        let offsetX, offsetY;
+                let isDragging = false;
+                let offsetX, offsetY;
 
-        dragHandle.addEventListener('mousedown', (e) => {
-            isDragging = true;
-            musicPlayerFixed.classList.add('dragging');
-            offsetX = e.clientX - musicPlayerFixed.getBoundingClientRect().left;
-            offsetY = e.clientY - musicPlayerFixed.getBoundingClientRect().top;
-            e.stopPropagation(); // Prevent immediate expansion when starting drag
-        });
+                dragHandle.addEventListener('mousedown', (e) => {
+                    isDragging = true;
+                    musicPlayerFixed.classList.add('dragging');
+                    offsetX = e.clientX - musicPlayerFixed.getBoundingClientRect().left;
+                    offsetY = e.clientY - musicPlayerFixed.getBoundingClientRect().top;
+                    e.stopPropagation(); // Prevent immediate expansion when starting drag
+                });
 
-        document.addEventListener('mousemove', (e) => {
-            if (!isDragging) return;
-            musicPlayerFixed.style.left = e.clientX - offsetX + 'px';
-            musicPlayerFixed.style.top = e.clientY - offsetY + 'px';
-        });
+                document.addEventListener('mousemove', (e) => {
+                    if (!isDragging) return;
+                    musicPlayerFixed.style.left = e.clientX - offsetX + 'px';
+                    musicPlayerFixed.style.top = e.clientY - offsetY + 'px';
+                });
 
-        document.addEventListener('mouseup', () => {
-            if (!isDragging) return;
-            isDragging = false;
-            musicPlayerFixed.classList.remove('dragging');
-        });
+                document.addEventListener('mouseup', () => {
+                    if (!isDragging) return;
+                    isDragging = false;
+                    musicPlayerFixed.classList.remove('dragging');
+                });
 
-        musicPlayerFixed.addEventListener("click", () => {
-            musicPlayerFixed.classList.toggle("expanded");
-        });
+                musicPlayerFixed.addEventListener("click", () => {
+                    musicPlayerFixed.classList.toggle("expanded");
+                });
 
-        fixedSelect.addEventListener("change", () => {
-            fixedEmbed.src = fixedSelect.value;
-            const selectedVibe = fixedSelect.options[fixedSelect.selectedIndex].text;
-            alert(`Switched to: ${selectedVibe}`);
-        });
+                fixedSelect.addEventListener("change", () => {
+                    fixedEmbed.src = fixedSelect.value;
+                    const selectedVibe = fixedSelect.options[fixedSelect.selectedIndex].text;
+                    alert(`Switched to: ${selectedVibe}`);
+                });
 
-        fixedToggle.addEventListener("click", () => {
-            body.classList.toggle("light-mode");
-        });
+                fixedToggle.addEventListener("click", () => {
+                    body.classList.toggle("light-mode");
+                });
 
-        for (let i = 0; i < 50; i++) {
-            const star = document.createElement("div");
-            star.className = "stars";
-            star.style.top = Math.random() * 100 + "%";
-            star.style.left = Math.random() * 100 + "%";
-            star.style.animationDuration = (Math.random() * 2 + 1) + "s";
-            fixedStarsContainer.appendChild(star);
-        }
+                for (let i = 0; i < 50; i++) {
+                    const star = document.createElement("div");
+                    star.className = "stars";
+                    star.style.top = Math.random() * 100 + "%";
+                    star.style.left = Math.random() * 100 + "%";
+                    star.style.animationDuration = (Math.random() * 2 + 1) + "s";
+                    fixedStarsContainer.appendChild(star);
+                }
 
-        // Keep existing scripts block for page-specific scripts
-        const sidebar = document.querySelector('.sidebar');
-        const content = document.querySelector('.content');
-        const toggleBtn = document.querySelector('.toggle-btn');
+                // Keep existing scripts block for page-specific scripts
+                const sidebar = document.querySelector('.sidebar');
+                const content = document.querySelector('.content');
+                const toggleBtn = document.querySelector('.toggle-btn');
 
         toggleBtn.addEventListener('click', () => {
             sidebar.classList.toggle('collapsed');
@@ -196,6 +202,13 @@
     dateFilter.addEventListener("input", filterEntries);
 
     </script>
+                toggleBtn.addEventListener('click', () => {
+                    sidebar.classList.toggle('collapsed');
+                    content.classList.toggle('collapsed');
+                    toggleBtn.classList.toggle('collapsed');
+                });
+            </script>
+        {% endblock %}
     {% endblock %}
 </body>
 

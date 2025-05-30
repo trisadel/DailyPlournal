@@ -1,0 +1,727 @@
+{% extends 'base.html' %}
+
+{% block title %}My Planner{% endblock %}
+
+{% block content %}
+<button id="toggleUIBtn2" style="margin-left: 1rem;">Hide UI</button>
+
+<div class="planner-wrapper">
+    <div class="planner-container">
+        <div class="planner-controls">
+            <div>
+                <button onclick="changeView('month')">Month</button>
+                <button onclick="changeView('week')">Week</button>
+                <button onclick="changeView('day')">Day</button>
+            </div>
+            <div>
+                <button onclick="prev()">←</button>
+                <span id="currentLabel"></span>
+                <button onclick="next()">→</button>
+            </div>
+        </div>
+        <div id="calendar" class="planner-calendar-grid"></div>
+    </div>
+
+    <div class="planner-bottom-section" id="bottom-section">
+        <div>
+            <h3>✔ Habit Tracker</h3>
+            <div id="habitList"></div>
+        </div>
+
+        <div>
+            <h3>📝 Notes for <span id="noteDateLabel">None</span></h3>
+            <textarea id="noteBox" placeholder="Select a day to add a note..." disabled></textarea>
+            <button id="addNoteBtn" style="margin-top: 0.5rem;" onclick="addNote()">Add Note</button>
+            <button id="deleteNoteBtn" style="margin-top: 0.5rem; margin-left: 0.5rem; display: none;" onclick="deleteNote()">Delete Note</button>
+        </div>
+
+        <div>
+            <h3>➕ Add Custom Habit</h3>
+            <input type="text" id="newHabitInput" class="planner-habit-input" placeholder="New habit..." />
+            <button onclick="addCustomHabit()">Add Habit</button>
+        </div>
+
+        <div>
+            <h3>➕ Add Custom Section</h3>
+            <input type="text" id="newSectionName" class="planner-habit-input" placeholder="Section title (e.g. Budget, Appointments)" />
+            <select id="newSectionType" class="planner-habit-input">
+                <option value="text">Text</option>
+                <option value="time">Time</option>
+                <option value="money">Money</option>
+            </select>
+            <button onclick="addCustomSection()">Add Section</button>
+        </div>
+
+        <div id="customSectionsContainer"></div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+    <script>
+        // Initialize with data from Flask
+        let currentDate = new Date();
+        let viewMode = 'month';
+        let selectedDate = formatDate(new Date()); // Initialize selectedDate to today's date
+        let notes = {{ initial_notes | tojson }}; // Load initial notes
+        let habitList = {{ initial_habit_list | tojson }}; // Load initial habits
+        let habitStatus = {{ initial_habit_status | tojson }}; // Load initial habit statuses
+        let customSections = {{ initial_custom_sections | tojson }}; // Load initial custom sections
+
+        // Helper function to format date to YYYY-MM-DD in local time
+        function formatDate(date) {
+            const year = date.getFullYear();
+            const month = (date.getMonth() + 1).toString().padStart(2, '0');
+            const day = date.getDate().toString().padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
+        // --- API Interaction Functions ---
+
+        async function saveNoteToDB(dateStr, content) {
+            const response = await fetch('/api/save_note/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ date: dateStr, content: content })
+            });
+            const data = await response.json();
+            if (data.status === 'success') {
+                console.log('Note saved successfully:', data.message);
+            } else {
+                console.error('Failed to save note:', data.message);
+            }
+        }
+
+        async function deleteNoteFromDB(dateStr) {
+            const response = await fetch('/api/delete_note/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ date: dateStr })
+            });
+            const data = await response.json();
+            if (data.status === 'success') {
+                console.log('Note deleted successfully:', data.message);
+            } else {
+                console.error('Failed to delete note:', data.message);
+            }
+        }
+
+        async function saveHabitStatusToDB(dateStr, habitName, completed) {
+            const response = await fetch('/api/save_habit_status/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ date: dateStr, habitName: habitName, completed: completed })
+            });
+            const data = await response.json();
+            if (data.status === 'success') {
+                console.log('Habit status updated:', data.message);
+            } else {
+                console.error('Failed to update habit status:', data.message);
+            }
+        }
+
+        async function addHabitToDB(habitName) {
+            const response = await fetch('/api/add_habit/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ habitName: habitName })
+            });
+            const data = await response.json();
+            if (data.status === 'success') {
+                console.log('Habit added:', data.message);
+                return true;
+            } else {
+                console.error('Failed to add habit:', data.message);
+                alert(data.message); // Show alert if habit already exists
+                return false;
+            }
+        }
+
+        async function deleteHabitFromDB(habitName) {
+            const response = await fetch('/api/delete_habit/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ habitName: habitName })
+            });
+            const data = await response.json();
+            if (data.status === 'success') {
+                console.log('Habit deleted:', data.message);
+                return true;
+            } else {
+                console.error('Failed to delete habit:', data.message);
+                return false;
+            }
+        }
+
+        async function saveCustomSectionToDB(dateStr, sectionName, type, content) {
+            const response = await fetch('/api/save_custom_section/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ date: dateStr, sectionName: sectionName, type: type, content: content })
+            });
+            const data = await response.json();
+            if (data.status === 'success') {
+                console.log('Custom section saved:', data.message);
+            } else {
+                console.error('Failed to save custom section:', data.message);
+            }
+        }
+
+        async function deleteCustomSectionFromDB(dateStr, sectionName) {
+            const response = await fetch('/api/delete_custom_section/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ date: dateStr, sectionName: sectionName })
+            });
+            const data = await response.json();
+            if (data.status === 'success') {
+                console.log('Custom section deleted:', data.message);
+                return true;
+            } else {
+                console.error('Failed to delete custom section:', data.message);
+                return false;
+            }
+        }
+
+
+        // --- Calendar Rendering Functions ---
+
+        function renderCalendar() {
+            const calendar = document.getElementById('calendar');
+            const label = document.getElementById('currentLabel');
+            calendar.innerHTML = '';
+            calendar.className = 'planner-calendar-grid'; // Reset class for different views
+
+            if (viewMode === 'month') {
+                renderMonthView(calendar, label);
+            } else if (viewMode === 'week') {
+                calendar.classList.add('planner-week-grid'); // Add specific class for week view
+                renderWeekView(calendar, label);
+            } else { // Day view
+                calendar.classList.add('planner-day-grid'); // Add specific class for day view
+                renderDayView(calendar, label);
+            }
+        }
+
+        function renderMonthView(calendar, label) {
+            const year = currentDate.getFullYear();
+            const month = currentDate.getMonth();
+            const firstDay = new Date(year, month, 1);
+            const lastDay = new Date(year, month + 1, 0);
+            const firstDayIndex = firstDay.getDay();
+            const totalDays = lastDay.getDate();
+            const todayStr = formatDate(new Date());
+            const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+            weekdays.forEach(day => {
+                const header = document.createElement('div');
+                header.className = 'planner-calendar-header';
+                header.textContent = day;
+                calendar.appendChild(header);
+            });
+
+            for (let i = 0; i < firstDayIndex; i++) {
+                calendar.appendChild(document.createElement('div')); // Empty cells for padding
+            }
+
+            for (let day = 1; day <= totalDays; day++) {
+                const cellDate = new Date(year, month, day);
+                const cellStr = formatDate(cellDate);
+                const cell = document.createElement('div');
+                cell.className = 'planner-calendar-cell';
+
+                let previewContent = `<strong>${day}</strong>`;
+                if (notes[cellStr] && notes[cellStr].trim() !== '') {
+                    previewContent += `<div class="planner-note-preview">📝</div>`;
+                }
+                if (customSections[cellStr] && Object.keys(customSections[cellStr]).length > 0) {
+                    const sectionTitles = Object.keys(customSections[cellStr]).join(', ');
+                    previewContent += `<div class="planner-section-preview" style="font-size: 0.8rem; color: #777;">${sectionTitles}</div>`;
+                }
+                cell.innerHTML = previewContent;
+
+                if (cellStr === todayStr) cell.classList.add('planner-today');
+                if (selectedDate === cellStr) cell.classList.add('planner-selected');
+                cell.onclick = () => selectDate(cellStr, cell);
+
+                if (cellStr !== todayStr && cellStr !== selectedDate) {
+                    cell.addEventListener('mouseover', () => {
+                        let fullContent = `<strong>${day}</strong><br>`;
+                        if (notes[cellStr] && notes[cellStr].trim() !== '') {
+                            fullContent += `Notes: ${notes[cellStr].substring(0, 20)}...<br>`;
+                        }
+                        if (customSections[cellStr] && Object.keys(customSections[cellStr]).length > 0) {
+                            fullContent += `Sections: ${Object.keys(customSections[cellStr]).join(', ')}`;
+                        }
+                        // Create a temporary div for the hover content
+                        const hoverDiv = document.createElement('div');
+                        hoverDiv.className = 'planner-hover-content';
+                        hoverDiv.style.backgroundColor = '#eee';
+                        hoverDiv.style.padding = '0.5rem';
+                        hoverDiv.style.borderRadius = '5px';
+                        hoverDiv.innerHTML = fullContent;
+                        cell.appendChild(hoverDiv);
+                    });
+                    cell.addEventListener('mouseout', () => {
+                        const hoverDiv = cell.querySelector('.planner-hover-content');
+                        if (hoverDiv) {
+                            cell.removeChild(hoverDiv);
+                        }
+                    });
+                }
+
+                calendar.appendChild(cell);
+            }
+
+            label.textContent = `${firstDay.toLocaleString('default', { month: 'long' })} ${year}`;
+        }
+
+        function renderWeekView(calendar, label) {
+            const start = getStartOfWeek(currentDate);
+            const end = new Date(start);
+            end.setDate(end.getDate() + 6);
+            const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+            weekdays.forEach(day => {
+                const header = document.createElement('div');
+                header.className = 'planner-calendar-header';
+                header.textContent = day;
+                calendar.appendChild(header);
+            });
+
+            for (let i = 0; i < 7; i++) {
+                const cellDate = new Date(start);
+                cellDate.setDate(start.getDate() + i);
+                const cellStr = formatDate(cellDate);
+                const cell = document.createElement('div');
+                cell.className = 'planner-calendar-cell';
+                const dayOfMonth = cellDate.getDate();
+
+                let previewContent = `<strong>${dayOfMonth}</strong>`;
+                if (notes[cellStr] && notes[cellStr].trim() !== '') {
+                    previewContent += `<div class="planner-note-preview">📝</div>`;
+                }
+                if (customSections[cellStr] && Object.keys(customSections[cellStr]).length > 0) {
+                    const sectionTitles = Object.keys(customSections[cellStr]).join(', ');
+                    previewContent += `<div class="planner-section-preview" style="font-size: 0.8rem; color: #777;">${sectionTitles}</div>`;
+                }
+                cell.innerHTML = previewContent;
+
+                if (cellStr === formatDate(new Date())) cell.classList.add('planner-today');
+                if (selectedDate === cellStr) cell.classList.add('planner-selected');
+                cell.onclick = () => selectDate(cellStr, cell);
+
+                if (cellStr !== formatDate(new Date()) && cellStr !== selectedDate) {
+                    cell.addEventListener('mouseover', () => {
+                        let fullContent = `<strong>${dayOfMonth}</strong><br>`;
+                        if (notes[cellStr] && notes[cellStr].trim() !== '') {
+                            fullContent += `Notes: ${notes[cellStr].substring(0, 20)}...<br>`;
+                        }
+                        if (customSections[cellStr] && Object.keys(customSections[cellStr]).length > 0) {
+                            fullContent += `Sections: ${Object.keys(customSections[cellStr]).join(', ')}`;
+                        }
+                        const hoverDiv = document.createElement('div');
+                        hoverDiv.className = 'planner-hover-content';
+                        hoverDiv.style.backgroundColor = '#eee';
+                        hoverDiv.style.padding = '0.5rem';
+                        hoverDiv.style.borderRadius = '5px';
+                        hoverDiv.innerHTML = fullContent;
+                        cell.appendChild(hoverDiv);
+                    });
+                    cell.addEventListener('mouseout', () => {
+                        const hoverDiv = cell.querySelector('.planner-hover-content');
+                        if (hoverDiv) {
+                            cell.removeChild(hoverDiv);
+                        }
+                    });
+                }
+                calendar.appendChild(cell);
+            }
+
+            label.textContent = `${start.toLocaleDateString()} - ${end.toLocaleDateString()}`;
+        }
+
+        function renderDayView(calendar, label) {
+            const dateStr = formatDate(currentDate);
+            calendar.innerHTML = `<div class="planner-calendar-header">Today</div>`;
+            const cell = document.createElement('div');
+            cell.className = 'planner-calendar-cell planner-selected';
+            let previewContent = `<strong>${currentDate.getDate()}</strong>`;
+            if (notes[dateStr] && notes[dateStr].trim() !== '') {
+                previewContent += `<div class="planner-note-preview">📝</div>`;
+            }
+            if (customSections[dateStr] && Object.keys(customSections[dateStr]).length > 0) {
+                const sectionTitles = Object.keys(customSections[dateStr]).join(', ');
+                previewContent += `<div class="planner-section-preview" style="font-size: 0.8rem; color: #777;">${sectionTitles}</div>`;
+            }
+            cell.innerHTML = previewContent;
+            cell.onclick = () => selectDate(dateStr, cell);
+            calendar.appendChild(cell);
+            label.textContent = currentDate.toLocaleDateString();
+        }
+
+        function getStartOfWeek(date) {
+            const day = date.getDay();
+            const diff = date.getDate() - day;
+            const startOfWeek = new Date(date.setDate(diff));
+            startOfWeek.setHours(0, 0, 0, 0);
+            return startOfWeek;
+        }
+
+        function changeView(mode) {
+            viewMode = mode;
+            renderCalendar();
+        }
+
+        function prev() {
+            if (viewMode === 'month') {
+                currentDate.setMonth(currentDate.getMonth() - 1);
+            } else if (viewMode === 'week') {
+                currentDate.setDate(currentDate.getDate() - 7);
+            } else {
+                currentDate.setDate(currentDate.getDate() - 1);
+            }
+            renderCalendar();
+        }
+
+        function next() {
+            if (viewMode === 'month') {
+                currentDate.setMonth(currentDate.getMonth() + 1);
+            } else if (viewMode === 'week') {
+                currentDate.setDate(currentDate.getDate() + 7);
+            } else {
+                currentDate.setDate(currentDate.getDate() + 1);
+            }
+            renderCalendar();
+        }
+
+        function selectDate(dateStr, element) {
+            const previouslySelected = document.querySelector('.planner-calendar-cell.planner-selected');
+            if (previouslySelected) {
+                previouslySelected.classList.remove('planner-selected');
+            }
+
+            if (element) {
+                element.classList.add('planner-selected');
+            }
+
+            selectedDate = dateStr;
+            document.getElementById('noteDateLabel').textContent = dateStr;
+            const noteBox = document.getElementById('noteBox');
+            noteBox.disabled = false;
+            noteBox.value = notes[dateStr] || '';
+            noteBox.oninput = () => {
+                notes[dateStr] = noteBox.value;
+                saveNoteToDB(dateStr, noteBox.value); // Save note on input
+                updateNotePreview(dateStr); // Update preview when note changes
+                toggleDeleteNoteButton(); // Update delete button visibility
+            };
+            toggleDeleteNoteButton(); // Initial check for delete button visibility
+
+            renderHabitTracker();
+            renderCustomSections();
+        }
+
+        function updateNotePreview(dateStr) {
+            const cells = document.querySelectorAll(`.planner-calendar-cell`);
+            cells.forEach(cell => {
+                const cellOnClick = cell.getAttribute('onclick');
+                if (cellOnClick && cellOnClick.includes(`'${dateStr}'`)) {
+                    const day = new Date(dateStr).getDate();
+                    let previewContent = `<strong>${day}</strong>`;
+                    if (notes[dateStr] && notes[dateStr].trim() !== '') {
+                        previewContent += `<div class="planner-note-preview">📝</div>`;
+                    }
+                    if (customSections[dateStr] && Object.keys(customSections[dateStr]).length > 0) {
+                        const sectionTitles = Object.keys(customSections[dateStr]).join(', ');
+                        previewContent += `<div class="planner-section-preview" style="font-size: 0.8rem; color: #777;">${sectionTitles}</div>`;
+                    }
+                    cell.innerHTML = previewContent;
+                    // Re-add selected/today classes as they might be overwritten by innerHTML
+                    if (dateStr === formatDate(new Date())) cell.classList.add('planner-today');
+                    if (selectedDate === dateStr) cell.classList.add('planner-selected');
+                }
+            });
+        }
+
+        function addNote() {
+            if (!selectedDate) {
+                alert('Please select a date first.');
+                return;
+            }
+            const noteBox = document.getElementById('noteBox');
+            if (!notes[selectedDate] || notes[selectedDate].trim() === '') {
+                noteBox.value = ''; // Clear if existing note is empty
+            }
+            noteBox.focus();
+            noteBox.disabled = false;
+            // The oninput handler will save it to the DB
+            toggleDeleteNoteButton();
+        }
+
+        async function deleteNote() {
+            if (!selectedDate) return;
+            if (confirm(`Are you sure you want to delete the note for ${selectedDate}?`)) {
+                delete notes[selectedDate];
+                document.getElementById('noteBox').value = '';
+                await deleteNoteFromDB(selectedDate);
+                updateNotePreview(selectedDate);
+                toggleDeleteNoteButton();
+            }
+        }
+
+        function toggleDeleteNoteButton() {
+            const deleteBtn = document.getElementById('deleteNoteBtn');
+            if (selectedDate && notes[selectedDate] && notes[selectedDate].trim() !== '') {
+                deleteBtn.style.display = 'inline-block';
+            } else {
+                deleteBtn.style.display = 'none';
+            }
+        }
+
+
+        // Habit Tracker Functions
+        async function addCustomHabit() {
+            const input = document.getElementById('newHabitInput');
+            const habitName = input.value.trim();
+            if (habitName) {
+                const success = await addHabitToDB(habitName);
+                if (success) {
+                    if (!habitList.includes(habitName)) {
+                        habitList.push(habitName);
+                        input.value = '';
+                        renderHabitTracker();
+                    }
+                }
+            }
+        }
+
+        async function toggleHabitStatus(habitName) {
+            if (!selectedDate) return;
+            if (!habitStatus[selectedDate]) {
+                habitStatus[selectedDate] = {};
+            }
+            const newStatus = !habitStatus[selectedDate][habitName];
+            habitStatus[selectedDate][habitName] = newStatus;
+            await saveHabitStatusToDB(selectedDate, habitName, newStatus);
+            renderHabitTracker();
+        }
+
+        function renderHabitTracker() {
+            const habitListContainer = document.getElementById('habitList');
+            habitListContainer.innerHTML = '';
+
+            habitList.forEach(habit => {
+                const habitItem = document.createElement('div');
+                habitItem.className = 'planner-habit-item';
+                // Check habitStatus[selectedDate] and then habitStatus[selectedDate][habit]
+                const isCompleted = habitStatus[selectedDate] && habitStatus[selectedDate][habit];
+
+                habitItem.innerHTML = `
+                    <input type="checkbox" id="habit-${habit}" ${isCompleted ? 'checked' : ''}>
+                    <label for="habit-${habit}"><strong>${habit}</strong></label>
+                    <button onclick="deleteHabit('${habit}')">Delete</button>
+                `;
+                habitItem.querySelector('input[type="checkbox"]').onchange = () => toggleHabitStatus(habit);
+                habitListContainer.appendChild(habitItem);
+            });
+        }
+
+        async function deleteHabit(habitName) {
+            if (confirm(`Are you sure you want to delete the habit "${habitName}"? This will remove its status for all dates.`)) {
+                const success = await deleteHabitFromDB(habitName);
+                if (success) {
+                    habitList = habitList.filter(h => h !== habitName);
+                    // Also clean up habitStatus for the deleted habit across all dates
+                    for (const date in habitStatus) {
+                        if (habitStatus[date][habitName]) {
+                            delete habitStatus[date][habitName];
+                        }
+                    }
+                    renderHabitTracker();
+                }
+            }
+        }
+
+        // Custom Sections Functions
+        const icons = {
+            'text': '📝',
+            'time': '⏰',
+            'money': '💰'
+        };
+
+        async function addCustomSection() {
+            const nameInput = document.getElementById('newSectionName');
+            const typeSelect = document.getElementById('newSectionType');
+            const name = nameInput.value.trim();
+            const type = typeSelect.value;
+
+            if (!selectedDate) {
+                alert('Please select a date first.');
+                return;
+            }
+
+            if (!name) {
+                alert('Please enter a section title.');
+                return;
+            }
+
+            if (!customSections[selectedDate]) {
+                customSections[selectedDate] = {};
+            }
+
+            // Check if section exists, and if so, update its type and content/slots based on new type
+            let contentToSave = '';
+            let newSectionAdded = false;
+
+            if (customSections[selectedDate][name]) {
+                // If section exists, update its type and content/slots based on new type
+                if (type === 'time' && customSections[selectedDate][name].type !== 'time') {
+                    customSections[selectedDate][name].type = 'time';
+                    customSections[selectedDate][name].slots = []; // Clear if type changes to time
+                    contentToSave = JSON.stringify([]);
+                } else if (type !== 'time' && customSections[selectedDate][name].type === 'time') {
+                    customSections[selectedDate][name].type = type;
+                    customSections[selectedDate][name].value = ''; // Clear if type changes from time
+                    delete customSections[selectedDate][name].slots;
+                    contentToSave = '';
+                } else if (type !== 'time') {
+                    customSections[selectedDate][name].value = ''; // Reset value for text/money
+                    delete customSections[selectedDate][name].slots;
+                    contentToSave = '';
+                } else if (type === 'time') {
+                    contentToSave = JSON.stringify(customSections[selectedDate][name].slots || []);
+                }
+            } else {
+                // Add new section
+                customSections[selectedDate][name] = { type: type, value: type !== 'time' ? '' : undefined, slots: type === 'time' ? [] : undefined };
+                newSectionAdded = true;
+                if (type === 'time') {
+                    contentToSave = JSON.stringify([]);
+                } else {
+                    contentToSave = '';
+                }
+            }
+
+            await saveCustomSectionToDB(selectedDate, name, type, contentToSave);
+
+            nameInput.value = '';
+            renderCustomSections();
+            updateNotePreview(selectedDate); // Update cell preview
+        }
+
+
+        function renderCustomSections() {
+            const container = document.getElementById('customSectionsContainer');
+            container.innerHTML = '';
+
+            if (!selectedDate) {
+                container.innerHTML = '<p>Please select a date to add sections.</p>';
+                return;
+            }
+
+            if (!customSections[selectedDate] || Object.keys(customSections[selectedDate]).length === 0) {
+                container.innerHTML = '<p>No custom sections for this date. Add one above!</p>';
+                return;
+            }
+
+            for (const sectionName in customSections[selectedDate]) {
+                const sectionData = customSections[selectedDate][sectionName];
+                const sectionDiv = document.createElement('div');
+                sectionDiv.className = 'planner-custom-section-item';
+
+                let contentHtml = '';
+                if (sectionData.type === 'text' || sectionData.type === 'money') {
+                    contentHtml = `<textarea placeholder="Enter ${sectionData.type} here..." oninput="customSections['${selectedDate}']['${sectionName}'].value = this.value; saveCustomSectionToDB('${selectedDate}', '${sectionName}', '${sectionData.type}', this.value)">${sectionData.value || ''}</textarea>`;
+                } else if (sectionData.type === 'time') {
+                    contentHtml = `<div class="planner-time-slots-container">`;
+                    if (sectionData.slots && sectionData.slots.length > 0) {
+                        sectionData.slots.forEach((slot, index) => {
+                            contentHtml += `
+                                <div class="planner-time-slot-input-group">
+                                    <input type="time" value="${slot.start || ''}" onchange="customSections['${selectedDate}']['${sectionName}'].slots[${index}].start = this.value; saveCustomSectionToDB('${selectedDate}', '${sectionName}', '${sectionData.type}', JSON.stringify(customSections['${selectedDate}']['${sectionName}'].slots))">
+                                    <span>-</span>
+                                    <input type="time" value="${slot.end || ''}" onchange="customSections['${selectedDate}']['${sectionName}'].slots[${index}].end = this.value; saveCustomSectionToDB('${selectedDate}', '${sectionName}', '${sectionData.type}', JSON.stringify(customSections['${selectedDate}']['${sectionName}'].slots))">
+                                    <button onclick="deleteTimeSlot('${sectionName}', ${index})">Delete</button>
+                                </div>
+                            `;
+                        });
+                    }
+                    contentHtml += `<button class="planner-add-slot-btn" onclick="addTimeSlot('${sectionName}')">Add Time Slot</button></div>`;
+                }
+
+                sectionDiv.innerHTML = `
+                    <h4>
+                        ${icons[sectionData.type]} ${sectionName}
+                        <button onclick="deleteCustomSection('${sectionName}')">Delete Section</button>
+                    </h4>
+                    ${contentHtml}
+                `;
+                container.appendChild(sectionDiv);
+            }
+        }
+
+        async function deleteCustomSection(sectionName) {
+            if (confirm(`Are you sure you want to delete the section "${sectionName}" for ${selectedDate}?`)) {
+                const success = await deleteCustomSectionFromDB(selectedDate, sectionName);
+                if (success) {
+                    delete customSections[selectedDate][sectionName];
+                    renderCustomSections();
+                    updateNotePreview(selectedDate); // Update cell preview
+                }
+            }
+        }
+
+        async function addTimeSlot(sectionName) {
+            if (!selectedDate) return;
+            if (!customSections[selectedDate]) return;
+            if (!customSections[selectedDate][sectionName]) return;
+            if (customSections[selectedDate][sectionName].type !== 'time') return;
+
+            customSections[selectedDate][sectionName].slots.push({ start: '', end: '' });
+            await saveCustomSectionToDB(selectedDate, sectionName, 'time', JSON.stringify(customSections[selectedDate][sectionName].slots));
+            renderCustomSections();
+        }
+
+        async function deleteTimeSlot(sectionName, index) {
+            if (!selectedDate) return;
+            if (!customSections[selectedDate]) return;
+            if (!customSections[selectedDate][sectionName]) return;
+
+            customSections[selectedDate][sectionName].slots.splice(index, 1);
+            await saveCustomSectionToDB(selectedDate, sectionName, 'time', JSON.stringify(customSections[selectedDate][sectionName].slots));
+            renderCustomSections();
+        }
+
+        const toggleBtn2 = document.getElementById('toggleUIBtn2');
+        const bottomSection = document.getElementById('bottom-section');
+        let uiVisible = true;
+        toggleBtn2.addEventListener('click', () => {
+            uiVisible = !uiVisible;
+            bottomSection.style.display = uiVisible ? 'flex' : 'none';
+            toggleBtn2.textContent = uiVisible ? 'Hide UI' : 'Show UI';
+        });
+
+        // Initial render on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            renderCalendar();
+            // Automatically select today's date on initial load
+            const todayCell = document.querySelector(`.planner-calendar-cell.planner-today`);
+            if (todayCell) {
+                selectDate(formatDate(new Date()), todayCell);
+            } else {
+                // Fallback if today's cell isn't immediately available (e.g., in week/day view and not current date)
+                selectDate(formatDate(new Date()), null);
+            }
+            renderHabitTracker(); // Ensure habits are rendered on load
+            renderCustomSections(); // Ensure custom sections are rendered on load
+            toggleDeleteNoteButton(); // Initial check for delete note button visibility
+        });
+    </script>
+{% endblock %}
+
+{% block head %}
+    {{ super() }}
+    <link rel="stylesheet" href="{{ url_for('static', filename='planner.css') }}">
+{% endblock %}

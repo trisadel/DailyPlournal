@@ -1,0 +1,349 @@
+/* General Body and Layout */
+
+/* Specific styling for the toggle button */
+#toggleUIBtn2 {
+    background-color: #6c757d; /* A subtle grey for the button */
+    color: white;
+    border: none; /* No border for a cleaner look */
+    padding: 8px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin: 1rem auto 0 auto; /* Center the button and provide top margin */
+    display: block; /* Make it a block element to center with margin: auto */
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+#toggleUIBtn2:hover {
+    background-color: #5a6268; /* Slightly darker grey on hover */
+    transform: translateY(-1px); /* Subtle lift effect */
+}
+
+/* Planner Wrapper & Container */
+.planner-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    max-width: 1200px;
+    margin: 20px auto;
+    box-sizing: border-box;
+}
+
+.planner-container {
+    width: 100%;
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid #dee2e6; /* Light grey border */
+    margin-bottom: 20px;
+    box-shadow: none; /* Removed box shadow for a flatter look */
+}
+
+/* Controls (Navigation and View Mode) */
+.planner-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.planner-controls button {
+    background-color: #f8f9fa; /* Light background for buttons */
+    color: #495057; /* Dark grey text for buttons */
+    border: 1px solid #ced4da; /* Light grey button border */
+    padding: 8px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.planner-controls button:hover {
+    background-color: #e9ecef; /* Slightly darker hover */
+}
+
+.planner-controls #currentLabel {
+    font-size: 1.3rem;
+    font-weight: 500;
+    color: #343a40;
+    min-width: 150px;
+    text-align: center;
+}
+
+/* Calendar Grid */
+#calendar {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 1px; /* Minimal gap for border effect */
+    background-color: #dee2e6; /* Light grey background for grid lines */
+    border-radius: 8px;
+    overflow: hidden; /* Hide overflow to maintain rounded corners */
+}
+
+.planner-calendar-header {
+    background-color: #f8f9fa;
+    font-weight: 500;
+    padding: 10px 5px;
+    text-align: center;
+    color: #6c757d;
+    font-size: 0.85rem;
+}
+
+.planner-calendar-cell {
+    background-color: #ffffff;
+    padding: 10px 8px;
+    text-align: left; /* Align content to the left for a cleaner look */
+    min-height: 70px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start; /* Align content to the top */
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    font-size: 0.9rem;
+    font-weight: 400;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid transparent; /* Transparent border for hover effect */
+}
+
+.planner-calendar-cell:hover {
+    background-color: #e9ecef;
+    border: 1px solid #adb5bd; /* Subtle border on hover */
+}
+
+.planner-today {
+    background-color: #e7f3ff; /* Light blue for today */
+    border: 1px solid #007bff;
+    font-weight: 500;
+}
+
+.planner-selected {
+    background-color: #ffe3e0; /* Light red for selected */
+    border: 1px solid #dc3545;
+    font-weight: 500;
+}
+
+.planner-calendar-cell strong {
+    font-size: 1em;
+    margin-bottom: 3px;
+    display: block; /* Ensure day number is on its own line */
+    color: #343a40;
+}
+
+/* Note and Section Previews in Calendar Cells */
+.planner-note-preview, .planner-section-preview {
+    font-size: 0.7rem;
+    color: #6c757d;
+    margin-top: 2px;
+    word-break: break-word;
+}
+
+/* Bottom Section */
+.planner-bottom-section {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid #dee2e6;
+    gap: 20px;
+    box-shadow: none; /* Removed box shadow */
+}
+
+.planner-bottom-section h3 {
+    color: #007bff;
+    border-bottom: 2px solid #007bff;
+    padding-bottom: 8px;
+    margin-top: 0;
+    margin-bottom: 12px;
+    font-size: 1.2rem;
+}
+
+.planner-note-section textarea {
+    width: 100%;
+    min-height: 100px;
+    padding: 10px;
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 0.9rem;
+    resize: vertical;
+    box-sizing: border-box;
+}
+
+.planner-habit-tracker-section, .planner-custom-sections {
+    border: 1px solid #e9ecef;
+    padding: 15px;
+    border-radius: 8px;
+    background-color: #f8f9fa;
+}
+
+.planner-input-group {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.planner-habit-tracker-section input,
+.planner-custom-sections-control input,
+.planner-custom-sections-control select,
+.planner-habit-input {
+    flex-grow: 1;
+    padding: 8px 10px;
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    box-sizing: border-box;
+}
+
+.planner-habit-tracker-section button,
+.planner-custom-sections-control button {
+    background-color: #28a745; /* Green */
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background-color 0.3s ease;
+}
+
+.planner-habit-tracker-section button:hover,
+.planner-custom-sections-control button:hover {
+    background-color: #218838;
+}
+
+#habitList {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.planner-habit-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #f8f9fa;
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: 1px solid #e9ecef;
+    font-size: 0.9rem;
+}
+
+.planner-habit-item strong {
+    font-weight: 500;
+    color: #343a40;
+}
+
+.planner-habit-item button {
+    background-color: #dc3545; /* Red */
+    color: white;
+    border: none;
+    padding: 5px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: background-color 0.3s ease;
+}
+
+.planner-habit-item button:hover {
+    background-color: #c82333;
+}
+
+#customSectionsContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.planner-custom-section-item {
+    background-color: #f8f9fa;
+    border: 1px solid #e9ecef;
+    padding: 12px;
+    border-radius: 8px;
+    box-shadow: none; /* Removed box shadow */
+}
+
+.planner-custom-section-item h4 {
+    margin-top: 0;
+    color: #007bff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #cfe2ff;
+    padding-bottom: 8px;
+    margin-bottom: 10px;
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.planner-custom-section-item h4 button {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 4px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.7rem;
+}
+
+.planner-custom-section-item p {
+    font-size: 0.9rem;
+    color: #555;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.planner-add-slot-btn {
+    background-color: #17a2b8; /* Info blue */
+    color: white;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    margin-top: 8px;
+    transition: background-color 0.3s ease;
+}
+
+.planner-add-slot-btn:hover {
+    background-color: #138496;
+}
+
+.planner-time-slot-input-group {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.planner-time-slot-input-group input {
+    flex-grow: 1;
+    padding: 6px 8px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    box-sizing: border-box;
+}
+
+.planner-time-slot-input-group button {
+    background-color: #6c757d; /* Secondary gray */
+    color: white;
+    border: none;
+    padding: 5px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.7rem;
+    transition: background-color 0.3s ease;
+}
+
+.planner-time-slot-input-group button:hover {
+    background-color: #5a6268;
+}
