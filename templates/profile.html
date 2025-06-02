@@ -25,12 +25,29 @@
             <p class="profile-stat-label">Entries</p>
         </div>
         <div class="profile-stat-box">
-            <h2 class="profile-stat-number">{{ current_streak }}</h2>
+            {% if user.streak and user.streak.current_streak >= 100 %}
+           <img src="{{ url_for('static', filename='img/d100.png') }}" style="width: 80px; height: 80px; margin-bottom: 5px;">
+            <p class="profile-stat-label">Legendary Streak!</p>
+            {% elif user.streak and user.streak.current_streak >= 50 %}
+            <img src="{{ url_for('static', filename='img/d50.png') }}" style="width: 80px; height: 80px; margin-bottom: 5px;">
+            <p class="profile-stat-label">Half-Century Hero!</p>
+            {% elif user.streak and user.streak.current_streak >= 30 %}
+            <img src="{{ url_for('static', filename='img/d30.png') }}" style="width: 80px; height: 80px; margin-bottom: 5px;">
+            <p class="profile-stat-label">On Fire Streak!</p>
+            {% elif user.streak and user.streak.current_streak >= 10 %}
+            <img src="{{ url_for('static', filename='img/d10.png') }}" style="width: 80px; height: 80px; margin-bottom: 5px;">
+            <p class="profile-stat-label">Building Momentum!</p>
+            {% elif user.streak and user.streak.current_streak >= 1 %}
+            <img src="{{ url_for('static', filename='img/d1.png') }}" style="width: 80px; height: 80px; margin-bottom: 5px;">
+            <p class="profile-stat-label">The Spark!</p>
+            {% else %}
+            <h2 class="profile-stat-number">0</h2>
             <p class="profile-stat-label">Current Streak</p>
+            {% endif %}
         </div>
         <div class="profile-stat-box">
-            <h2 class="profile-stat-number">-</h2>
-            <p class="profile-stat-label">Streak Badges</p>
+            <h2 class="profile-stat-number">{{ current_streak }}</h2>
+            <p class="profile-stat-label">Current Streak</p>
         </div>
     </div>
 

@@ -20,11 +20,13 @@ h1 {
     font-size: 2.5em;
     border-bottom: 2px solid #e9ecef;
     padding-bottom: 10px;
+    margin-left: 10px;
 }
 
 p {
     color: #6c757d;
     font-size: 1.1em;
+    margin-left: 10px;
 }
 
 /* Daily Quote Section Styling */
@@ -125,4 +127,26 @@ p {
     font-weight: bold;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     margin-top: 20px; /* Space from journal entries */
+}
+
+.streak-info-box {
+    display: flex; /* Use flexbox for horizontal alignment */
+    align-items: center; /* Vertically centers items */
+    gap: 10px; /* Space between the image and text */
+    padding: 15px 20px; /* Add some padding around the section */
+    background-color: #f0f8ff; /* Light background for the streak info */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* Subtle shadow */
+    display: block; /* Ensures proper centering */
+}
+.streak-info-box img {
+    display: block; /* Ensures proper centering */
+    margin: 0 auto 5px auto; /* Centers image horizontally and adds bottom margin */
+    border: 3px solid rgba(255, 255, 255, 0.7); /* White border around the image */
+}
+
+.streak-info-box span {
+    font-weight: 600; /* Bold text */
+    line-height: 1.4; /* Improve line spacing */ 
+    font-size: 1.1em;
 }
