@@ -202,6 +202,12 @@
     dateFilter.addEventListener("input", filterEntries);
 
     </script>
+                toggleBtn.addEventListener('click', () => {
+                    sidebar.classList.toggle('collapsed');
+                    content.classList.toggle('collapsed');
+                    toggleBtn.classList.toggle('collapsed');
+                });
+            </script>
         {% endblock %}
     {% endblock %}
 </body>
