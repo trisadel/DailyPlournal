@@ -139,56 +139,64 @@ def new_journal_entry():
         return redirect(url_for('login'))
 
     user = User.query.get(session['user_id'])
+
     if request.method == 'POST':
         title = request.form['title']
         content = request.form['content']
         entry_type = request.form['type']
         mood = request.form.get('mood')
-        
-        # Get date from form and convert to datetime object
+
+        # Parse the date string from the form
         date_posted_str = request.form['date_posted']
-        date_posted = datetime.strptime(date_posted_str, '%Y-%m-%d') # Convert string to datetime object
+        date_posted = datetime.strptime(date_posted_str, '%Y-%m-%d')
 
         new_entry = JournalEntry(
             title=title,
             content=content,
             type=entry_type,
             mood=mood,
-            date_posted=date_posted, # Use the date from the form
+            date_posted=date_posted,
             user_id=session['user_id']
         )
         db.session.add(new_entry)
-        db.session.commit()
 
-       # Update streak based on the journal entry's date_posted
-        entry_date_for_streak = date_posted.date() # Use the date from the form for streak calculation
+        # Update streak based on the entry date
+        entry_date_for_streak = date_posted.date()
         streak = Streak.query.filter_by(user_id=session['user_id']).first()
 
         if not streak:
-            # If no streak exists, start a new one with the entry's date
-            streak = Streak(user_id=session['user_id'], current_streak=1, last_login_date=entry_date_for_streak)
+            streak = Streak(
+                user_id=session['user_id'],
+                current_streak=1,
+                last_login_date=entry_date_for_streak
+            )
             db.session.add(streak)
         else:
-            # Compare with the entry's date for streak logic
             if streak.last_login_date == entry_date_for_streak - timedelta(days=1):
-                # If the entry date is the day after the last streak date, increment
                 streak.current_streak += 1
+                streak.last_login_date = entry_date_for_streak
             elif streak.last_login_date != entry_date_for_streak:
-                # If the entry date is not consecutive and not the same day, reset streak
                 streak.current_streak = 1
                 streak.last_login_date = entry_date_for_streak
+
         db.session.commit()
 
         flash('Journal entry created successfully!', 'success')
         return redirect(url_for('dashboard'))
-    
-    # Pass today's date to the template for default value
+
+    # For GET requests, prepare variables for the template
     today_date = date.today().strftime('%Y-%m-%d')
     current_streak = user.streak.current_streak if user.streak else 0
-    return render_template('new_journal.html', user=user, today_date=today_date, current_streak=current_streak)
+    initial_stickers = []  # Or fetch real sticker data if needed
 
-    initial_stickers = []  # Just send an empty list for testing
-    return render_template('new_journal_entry.html', initial_stickers=initial_stickers)
+    return render_template(
+        'new_journal.html',
+        user=user,
+        today_date=today_date,
+        current_streak=current_streak,
+        initial_stickers=initial_stickers
+    )
+
 
 @app.route('/journal/view/<int:entry_id>')
 def view_journal_entry(entry_id):
