@@ -46,18 +46,20 @@
                     <a href="{{ url_for('new_journal_entry') }}" id="write-link">Write</a>
                 </li>
                <li>
-                        <a href="#">Journal Actions</a>
+                                    <a href="#">Journal Actions</a>
                         <div class="journal-actions-filters">
-                        <input type="date" id="entryDateFilter">
+                            <input type="text" id="entrySearch" placeholder="Search titles...">
+                            <input type="date" id="entryDateFilter">
                         </div>
                         <ul id="entryList">
                             {% if journal_entries %}
                                 {% for entry in journal_entries %}
                                     <li>
                                         <a href="{{ url_for('view_journal_entry', entry_id=entry.id) }}"
-                                            data-date="{{ entry.date_posted.strftime('%Y-%m-%d') }}">
-                                             {{ entry.title }} ({{ entry.date_posted.strftime('%Y-%m-%d') }})
-                                            </a>
+                                            data-date="{{ entry.date_posted.strftime('%Y-%m-%d') }}"
+                                            data-title="{{ entry.title | lower }}"> {# Added data-title here #}
+                                            {{ entry.title }} ({{ entry.date_posted.strftime('%Y-%m-%d') }})
+                                        </a>
                                     </li>
                                 {% endfor %}
                             {% else %}
@@ -97,33 +99,43 @@
             toggleBtn.classList.toggle('collapsed');
         });
 
-        // --- Journal entry filter logic ---
-    const searchInput = document.getElementById("entrySearch");
-    const dateFilter = document.getElementById("entryDateFilter");
-    const entryList = document.getElementById("entryList");
+         // --- Journal entry filter logic ---
+            // Ensure these elements exist in your HTML
+            const searchInput = document.getElementById("entrySearch");
+            const dateFilter = document.getElementById("entryDateFilter");
+            const entryList = document.getElementById("entryList");
 
-    function filterEntries() {
-        const searchText = searchInput.value.toLowerCase();
-        const filterDate = dateFilter.value;
+            function filterEntries() {
+                // Get the current search text (converted to lowercase for case-insensitive search)
+                const searchText = searchInput.value.toLowerCase();
+                // Get the selected date from the date filter
+                const filterDate = dateFilter.value;
 
-        Array.from(entryList.getElementsByTagName("li")).forEach((li) => {
-            const link = li.querySelector("a");
-            if (!link) return;
+                // Iterate over each journal entry list item
+                Array.from(entryList.getElementsByTagName("li")).forEach((li) => {
+                    const link = li.querySelector("a");
+                    // If there's no link, skip this list item
+                    if (!link) return;
 
-            const title = link.dataset.title || "";
-            const date = link.dataset.date || "";
+                    // Get the title and date from the data attributes
+                    // Use || "" to ensure a default empty string if the attribute is missing
+                    const title = link.dataset.title || "";
+                    const date = link.dataset.date || "";
 
-            const matchesTitle = title.includes(searchText);
-            const matchesDate = !filterDate || date === filterDate;
+                    // Check if the title includes the search text
+                    const matchesTitle = title.includes(searchText);
+                    // Check if the date matches the filter date, or if no date is filtered
+                    const matchesDate = !filterDate || date === filterDate;
 
-            li.style.display = matchesTitle && matchesDate ? "" : "none";
-        });
-    }
+                    // Show or hide the list item based on whether both conditions are met
+                    li.style.display = matchesTitle && matchesDate ? "" : "none";
+                });
+            }
 
-    searchInput.addEventListener("input", filterEntries);
-    dateFilter.addEventListener("input", filterEntries);
-
-    </script>
+            // Add event listeners to trigger filtering when inputs change
+            searchInput.addEventListener("input", filterEntries);
+            dateFilter.addEventListener("input", filterEntries);
+        </script>
         {% endblock %}
     {% endblock %}
 </body>
