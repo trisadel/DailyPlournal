@@ -561,3 +561,8 @@ if __name__ == '__main__':
     with app.app_context():
         db.create_all()  # Create tables within the app context
     app.run(debug=True)
+
+@app.route('/new', methods=['GET', 'POST'])
+def new_journal_entry():
+    initial_stickers = []  # Just send an empty list for testing
+    return render_template('new_journal_entry.html', initial_stickers=initial_stickers)
