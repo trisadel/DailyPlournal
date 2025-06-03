@@ -29,34 +29,30 @@
 
 .typography-controls {
     display: flex;
-    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: space-between; /* Distribute items evenly */
+    gap: 15px; /* Smaller gap */
     margin-bottom: 20px;
+    padding: 10px 15px;
+    background-color: #eff2f7; /* Slightly darker light background */
+    border-radius: 5px;
     align-items: center;
-    align-items: center;
-}
-
-.control-box {
-    display: flex;
-    align-items: center;
-    margin-bottom: 10px; /* Added for spacing in edit/view */
 }
 
 .control-box label {
-    margin-right: 8px;
-    font-weight: bold;
-    color: #333;
-    white-space: nowrap;
+    font-weight: 600; /* Slightly bolder labels */
+    color: #1d1b1b;
 }
 
 .control-box select,
-.control-box input[type="text"], /* Added input[type="text"] */
+.control-box input[type="text"],
 .control-box input[type="number"] {
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 1em;
-    width: 100%; /* Added for full width in edit/view */
+    border: 1px solid #cdd4e0; /* Softer border color */
+    border-radius: 3px;
+    padding: 7px; /* Slightly less padding */
+    font-size: 0.95em; /* Slightly smaller font */
 }
+
 
 .control-box textarea {
     width: 100%;
@@ -154,6 +150,27 @@ textarea {
     display: block;
     width: 100%;
     height: 100%;
+}
+
+
+.sticker-display-area {
+    position: relative;
+    min-height: 200px; /* Or adjust as needed based on content */
+    border: 1px dashed #ccc;
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #f9f9f9;
+    overflow: hidden; /* Important to contain absolute children */
+    border-radius: 8px;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.sticker-wrapper-display {
+    position: absolute;
+    box-sizing: border-box;
+    /* Optional: Add a subtle border or shadow for visual separation */
+    /* border: 1px solid rgba(0, 0, 0, 0.1); */
+    /* box-shadow: 0 2px 5px rgba(0,0,0,0.1); */
 }
 
 .resize-handle, .rotate-handle {
