@@ -45,7 +45,6 @@
                <li>
                         <a href="#">Journal Actions</a>
                         <div class="journal-actions-filters">
-                        <input type="text" id="entrySearch" placeholder="Search entries...">
                         <input type="date" id="entryDateFilter">
                         </div>
                         <ul id="entryList">
@@ -53,7 +52,6 @@
                                 {% for entry in journal_entries %}
                                     <li>
                                         <a href="{{ url_for('view_journal_entry', entry_id=entry.id) }}"
-                                            data-title="{{ entry.title | lower }}"
                                             data-date="{{ entry.date_posted.strftime('%Y-%m-%d') }}">
                                              {{ entry.title }} ({{ entry.date_posted.strftime('%Y-%m-%d') }})
                                             </a>
