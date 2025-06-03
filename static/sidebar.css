@@ -1,4 +1,7 @@
 .sidebar {
+    font-family: 'Comfortaa', cursive; /* 'cursive' is a good general fallback for cute/handwritten fonts */
+    font-size: 16px; /* Adjust as needed */
+    color: #00000032; /* Or any color that fits your cute theme */
     background-color: #f8f8f8;
     width: 200px;
     height: 100vh;
@@ -19,6 +22,8 @@
 }
 
 .sidebar-logo {
+    font-family: 'Comfortaa', cursive; /* 'cursive' is a good general fallback for cute/handwritten fonts */
+    color: #4A5568; /* Or any color that fits your cute theme */
     font-size: 1.5em;
     font-weight: bold;
     color: #333;
@@ -43,6 +48,7 @@
 }
 
 .name-field {
+    
     padding: 8px;
     border: 1px solid #ccc;
     border-radius: 4px;
