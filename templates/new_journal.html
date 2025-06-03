@@ -441,4 +441,66 @@
     document.querySelector('form').addEventListener('submit', collectAndReplaceDynamicContent);
 
 </script>
+
+<script type="application/json" id="initial-stickers">
+    {{ initial_stickers | tojson }}
+</script>
+
+<script>
+    window.addEventListener('DOMContentLoaded', () => {
+        const stickerDataElement = document.getElementById('initial-stickers');
+        if (stickerDataElement) {
+            try {
+                const stickers = JSON.parse(stickerDataElement.textContent);
+                const stickerContainer = document.getElementById('stickerContainer');
+                stickers.forEach(stickerData => {
+                    const wrapper = document.createElement('div');
+                    wrapper.className = 'sticker-wrapper';
+                    wrapper.style.left = stickerData.left;
+                    wrapper.style.top = stickerData.top;
+                    wrapper.style.width = stickerData.width;
+                    wrapper.style.height = stickerData.height;
+                    wrapper.style.position = 'absolute';
+                    wrapper.style.transform = `rotate(${stickerData.rotation})`;
+                    wrapper.dataset.dataUrl = stickerData.url;
+                    wrapper.dataset.originalLeft = stickerData.left;
+                    wrapper.dataset.originalTop = stickerData.top;
+                    wrapper.dataset.rotation = stickerData.rotation;
+                    wrapper.draggable = true;
+
+                    const img = document.createElement('img');
+            img.src = stickerData.url;
+            img.style.width = '100%';
+            img.style.height = '100%';
+            img.style.display = 'block';
+            img.style.pointerEvents = 'none';
+
+            const resizeHandle = document.createElement('div');
+            resizeHandle.className = 'resize-handle';
+
+            const rotateHandle = document.createElement('div');
+            rotateHandle.className = 'rotate-handle';
+
+            const deleteBtn = document.createElement('button');
+            deleteBtn.className = 'delete-button';
+            deleteBtn.innerHTML = '&times;';
+            deleteBtn.onclick = (e) => {
+                e.stopPropagation();
+                wrapper.remove();
+            };
+
+            wrapper.appendChild(img);
+            wrapper.appendChild(resizeHandle);
+            wrapper.appendChild(rotateHandle);
+            wrapper.appendChild(deleteBtn);
+            stickerContainer.appendChild(wrapper);
+
+                });
+            } catch (e) {
+                console.error("Error parsing initial stickers:", e);
+            }
+        }
+    });
+</script>
+
 {% endblock %}
