@@ -351,36 +351,48 @@
         e.dataTransfer.dropEffect = 'copy';
     });
 
-    textarea.addEventListener('drop', (e) => {
+        textarea.addEventListener('drop', (e) => {
         e.preventDefault();
         const stickerJsonString = e.dataTransfer.getData('text/plain');
-        const stickerId = e.dataTransfer.getData('text/x-sticker-id');
 
         if (stickerJsonString) {
             try {
                 const stickerData = JSON.parse(stickerJsonString);
-                const stickerTag = `[STICKER_DATA:${JSON.stringify(stickerData)}]`;
 
+                // Recreate sticker visually in the journal
+                const img = document.createElement('img');
+                img.src = stickerData.url;
+                img.className = 'embedded-sticker';
+                img.style.position = 'absolute';
+                img.style.left = stickerData.left;
+                img.style.top = stickerData.top;
+                img.style.width = stickerData.width;
+                img.style.height = stickerData.height;
+                img.style.transform = `rotate(${stickerData.rotation})`;
+                img.style.pointerEvents = 'none'; // Prevent interfering with typing
+
+                document.querySelector('.journal-editor').appendChild(img);
+
+                // Save metadata tag to the text content
+                const stickerTag = `[STICKER_DATA:${JSON.stringify(stickerData)}]`;
                 const start = textarea.selectionStart;
                 const end = textarea.selectionEnd;
                 textarea.value = textarea.value.substring(0, start) + stickerTag + textarea.value.substring(end);
-
-                // Optionally, reposition cursor after insertion
                 textarea.selectionStart = textarea.selectionEnd = start + stickerTag.length;
+                textarea.focus();
 
-                // Remove the visual sticker from the sticker container
+                // Optional: remove from sticker container
                 const draggedElement = document.querySelector(`.sticker-wrapper[data-dataurl="${stickerData.url}"]`);
                 if (draggedElement) {
                     draggedElement.remove();
                 }
-
-                textarea.focus();
 
             } catch (error) {
                 console.error("Error parsing sticker data on drop:", error);
             }
         }
     });
+
 
     function collectAndReplaceDynamicContent(event) {
         let currentJournalText = textarea.value;
