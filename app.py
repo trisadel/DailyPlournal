@@ -19,7 +19,13 @@ with app.app_context():
 
 @app.route('/')
 def home():
-    return render_template('homepage.html')
+    # Pass current_streak even for the homepage if a user is logged in
+    current_streak = 0
+    user = None
+    if 'user_id' in session:
+        user = User.query.get(session['user_id'])
+        current_streak = user.streak.current_streak if user.streak else 0
+    return render_template('homepage.html', user=user, current_streak=current_streak)
 
 @app.route('/signup/', methods=['GET', 'POST'])
 def signup():
@@ -178,7 +184,8 @@ def new_journal_entry():
     
     # Pass today's date to the template for default value
     today_date = date.today().strftime('%Y-%m-%d')
-    return render_template('new_journal.html', user=user, today_date=today_date)
+    current_streak = user.streak.current_streak if user.streak else 0
+    return render_template('new_journal.html', user=user, today_date=today_date, current_streak=current_streak)
 
 @app.route('/journal/view/<int:entry_id>')
 def view_journal_entry(entry_id):
@@ -189,7 +196,8 @@ def view_journal_entry(entry_id):
 
     if entry.user_id != session['user_id']:
         return "Unauthorized", 403
-    return render_template('view_journal.html', user=user, entry=entry)
+    current_streak = user.streak.current_streak if user.streak else 0
+    return render_template('view_journal.html', user=user, entry=entry, current_streak=current_streak)
 
 
 @app.route('/journal/edit/<int:entry_id>', methods=['GET', 'POST'])
@@ -220,7 +228,8 @@ def edit_journal_entry(entry_id):
         flash('Journal entry updated successfully!', 'success')
         # Change this line to redirect instead of jsonify
         return redirect(url_for('view_journal_entry', entry_id=entry.id)) # Corrected line
-    return render_template('edit_journal.html', user=user, entry=entry)
+    current_streak = user.streak.current_streak if user.streak else 0
+    return render_template('edit_journal.html', user=user, entry=entry, current_streak=current_streak)
 
 @app.route('/journal/update/<int:entry_id>', methods=['POST'])
 def update_journal_entry_json(entry_id):
@@ -314,14 +323,15 @@ def planner():
 
         initial_custom_sections[section_date][section.name] = section_data
 
-
+    current_streak = user.streak.current_streak if user.streak else 0
     return render_template(
         'planner.html',
         user=user,
         initial_notes=initial_notes,
         initial_habit_list=initial_habit_list,
         initial_habit_status=initial_habit_status,
-        initial_custom_sections=initial_custom_sections
+        initial_custom_sections=initial_custom_sections,
+        current_streak=current_streak
     )
 
 # API Endpoints for Planner data interaction
@@ -537,7 +547,8 @@ def musicplayer():
     if 'user_id' not in session:
         return redirect(url_for('login'))  # Or handle unauthenticated access as you prefer
     user = User.query.get(session['user_id'])
-    return render_template('musicplay.html', user=user)
+    current_streak = user.streak.current_streak if user.streak else 0
+    return render_template('musicplay.html', user=user, current_streak=current_streak)
 
 @app.route('/check_login/')  # New route to check login status
 def check_login():

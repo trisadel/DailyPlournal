@@ -79,14 +79,13 @@
                 <canvas id="sketchpad" width="600" height="300" style="border:1px solid #ccc; background:white;"></canvas>
                 <div class="sketchpad-controls-bottom">
                     <button type="button" id="clearSketch">Clear Sketch</button>
-                    <button type="button" id="insertSketchBtn">Insert Sketch into Journal</button>
                     <button type="button" id="addStickerBtn">Use as Sticker</button>
                 </div>
             </div>
 
             <div class="sticker-container" id="stickerContainer">
                 <h3>Interactive Stickers</h3>
-                <p>Add sketches as draggable, resizable, rotatable stickers here.</p>
+                <p>Drag and drop stickers here, or drag them into the journal text.</p>
             </div>
 
             <div class="btn-field">
@@ -143,8 +142,7 @@
     const penSize = document.getElementById('penSize');
     const penSizeValue = document.getElementById('penSizeValue');
     const clearSketch = document.getElementById('clearSketch');
-    const insertSketchBtn = document.getElementById('insertSketchBtn');
-    const addStickerBtn = document.getElementById('addStickerBtn'); // New button
+    const addStickerBtn = document.getElementById('addStickerBtn');
 
     // Set initial pen style
     ctx.strokeStyle = penColor.value;
@@ -188,36 +186,20 @@
         ctx.clearRect(0, 0, sketchpad.width, sketchpad.height);
     });
 
-    // Existing logic to insert sketch into textarea
-    insertSketchBtn.addEventListener('click', () => {
-        const sketchDataURL = sketchpad.toDataURL();
-        const start = textarea.selectionStart;
-        const end = textarea.selectionEnd;
-        const text = textarea.value;
-
-        // Embed sketch data with default properties as a JSON string
-        const sketchPayload = {
-            url: sketchDataURL,
-            width: sketchpad.width + 'px',  // Use canvas width
-            height: sketchpad.height + 'px', // Use canvas height
-            rotation: '0deg' // Default rotation
-        };
-        const placeholder = `[SKETCH_DATA:${JSON.stringify(sketchPayload)}]`;
-
-        textarea.value = text.substring(0, start) + placeholder + text.substring(end, text.length);
-
-        // Optionally clear canvas after inserting as main sketch
-        // ctx.clearRect(0, 0, sketchpad.width, sketchpad.height);
-        textarea.focus();
-        textarea.selectionEnd = start + placeholder.length;
-    });
+    // Function to check if the canvas is blank
+    function isCanvasBlank(canvas) {
+        const blank = document.createElement('canvas');
+        blank.width = canvas.width;
+        blank.height = canvas.height;
+        return canvas.toDataURL() === blank.toDataURL();
+    }
 
     // New logic to add sketch as an interactive sticker
     addStickerBtn.addEventListener('click', () => {
         const stickerContainer = document.getElementById('stickerContainer');
         const dataURL = sketchpad.toDataURL();
 
-        if (dataURL === sketchpad.toDataURL('image/png', 0) && sketchpad.width > 0 && sketchpad.height > 0) {
+        if (isCanvasBlank(sketchpad)) {
             alert('Sketchpad is empty! Please draw something first.');
             return;
         }
@@ -230,6 +212,10 @@
         wrapper.style.height = '100px';
         wrapper.style.position = 'absolute'; // Crucial for positioning
         wrapper.dataset.dataUrl = dataURL; // Store dataURL for later retrieval
+        wrapper.dataset.originalLeft = '0px'; // Store initial position for dragging
+        wrapper.dataset.originalTop = '0px';
+        wrapper.dataset.rotation = '0deg'; // Store initial rotation
+        wrapper.draggable = true; // Make the sticker wrapper draggable
 
         const img = document.createElement('img');
         img.src = dataURL;
@@ -251,8 +237,6 @@
         deleteBtn.onclick = (e) => {
             e.stopPropagation(); // Prevent drag/resize/rotate from triggering
             wrapper.remove();
-            // We don't remove from textarea immediately here,
-            // the collectAndReplaceDynamicContent will handle it on submit.
         };
 
         wrapper.appendChild(img);
@@ -261,12 +245,12 @@
         wrapper.appendChild(deleteBtn);
         stickerContainer.appendChild(wrapper);
 
-        // Dragging
-        let isDragging = false, dragOffsetX, dragOffsetY;
+        // Dragging for repositioning within sticker container
+        let isDraggingWrapper = false, dragOffsetX, dragOffsetY;
         wrapper.addEventListener('mousedown', (e) => {
-            // Only drag if not clicking on a handle
+            // Only drag if not clicking on a handle or delete button
             if (e.target === wrapper || e.target === img) {
-                isDragging = true;
+                isDraggingWrapper = true;
                 dragOffsetX = e.clientX - wrapper.getBoundingClientRect().left;
                 dragOffsetY = e.clientY - wrapper.getBoundingClientRect().top;
                 wrapper.style.cursor = 'grabbing';
@@ -274,7 +258,7 @@
         });
 
         document.addEventListener('mousemove', (e) => {
-            if (isDragging) {
+            if (isDraggingWrapper) {
                 const containerRect = stickerContainer.getBoundingClientRect();
                 let newLeft = e.clientX - containerRect.left - dragOffsetX;
                 let newTop = e.clientY - containerRect.top - dragOffsetY;
@@ -286,11 +270,14 @@
 
                 wrapper.style.left = newLeft + 'px';
                 wrapper.style.top = newTop + 'px';
+
+                wrapper.dataset.originalLeft = wrapper.style.left; // Update stored position
+                wrapper.dataset.originalTop = wrapper.style.top;
             }
         });
 
         document.addEventListener('mouseup', () => {
-            isDragging = false;
+            isDraggingWrapper = false;
             wrapper.style.cursor = 'grab';
         });
 
@@ -327,6 +314,7 @@
                 if (!isRotating) return;
                 const angle = Math.atan2(ev.clientY - centerY, ev.clientX - centerX);
                 wrapper.style.transform = `rotate(${angle}rad)`;
+                wrapper.dataset.rotation = `${angle}rad`; // Update stored rotation
             }
 
             function stopRotate() {
@@ -339,9 +327,66 @@
             document.addEventListener('mouseup', stopRotate);
         });
 
+        // Dragging a sticker into the textarea
+        wrapper.addEventListener('dragstart', (e) => {
+            const stickerData = {
+                url: wrapper.dataset.dataUrl,
+                left: wrapper.dataset.originalLeft,
+                top: wrapper.dataset.originalTop,
+                width: wrapper.style.width,
+                height: wrapper.style.height,
+                rotation: wrapper.dataset.rotation
+            };
+            e.dataTransfer.setData('text/plain', JSON.stringify(stickerData));
+            e.dataTransfer.setData('text/x-sticker-id', wrapper.id || 'temp_sticker_id'); // Using a temp ID if not set
+            e.dataTransfer.effectAllowed = 'copyMove';
+            e.target.classList.add('dragging'); // Optional: Add a class for visual feedback
+        });
+
+        wrapper.addEventListener('dragend', (e) => {
+            e.target.classList.remove('dragging'); // Optional: Remove the class
+        });
+
         // Clear canvas after using it as a sticker
         ctx.clearRect(0, 0, sketchpad.width, sketchpad.height);
         textarea.focus();
+    });
+
+    // Allow dropping on the textarea
+    textarea.addEventListener('dragover', (e) => {
+        e.preventDefault(); // Allow drop
+        e.dataTransfer.dropEffect = 'copy';
+    });
+
+    textarea.addEventListener('drop', (e) => {
+        e.preventDefault();
+        const stickerJsonString = e.dataTransfer.getData('text/plain');
+        const stickerId = e.dataTransfer.getData('text/x-sticker-id');
+
+        if (stickerJsonString) {
+            try {
+                const stickerData = JSON.parse(stickerJsonString);
+                const stickerTag = `[STICKER_DATA:${JSON.stringify(stickerData)}]`;
+
+                const start = textarea.selectionStart;
+                const end = textarea.selectionEnd;
+                textarea.value = textarea.value.substring(0, start) + stickerTag + textarea.value.substring(end);
+
+                // Optionally, reposition cursor after insertion
+                textarea.selectionStart = textarea.selectionEnd = start + stickerTag.length;
+
+                // Remove the visual sticker from the sticker container
+                const draggedElement = document.querySelector(`.sticker-wrapper[data-dataurl="${stickerData.url}"]`);
+                if (draggedElement) {
+                    draggedElement.remove();
+                }
+
+                textarea.focus();
+
+            } catch (error) {
+                console.error("Error parsing sticker data on drop:", error);
+            }
+        }
     });
 
     // Function to collect all sticker data from the DOM and update the textarea
@@ -413,6 +458,10 @@
                 wrapper.style.position = 'absolute';
                 wrapper.style.transform = stickerData.rotation ? `rotate(${stickerData.rotation})` : 'rotate(0deg)';
                 wrapper.dataset.dataUrl = dataURL;
+                wrapper.dataset.originalLeft = stickerData.left; // Store initial position for dragging
+                wrapper.dataset.originalTop = stickerData.top;
+                wrapper.dataset.rotation = stickerData.rotation; // Store initial rotation
+                wrapper.draggable = true; // Make the sticker wrapper draggable
 
                 const img = document.createElement('img');
                 img.src = dataURL;
@@ -442,10 +491,10 @@
                 stickerContainer.appendChild(wrapper);
 
                 // Re-add event listeners for existing stickers
-                let isDragging = false, dragOffsetX, dragOffsetY;
+                let isDraggingWrapper = false, dragOffsetX, dragOffsetY;
                 wrapper.addEventListener('mousedown', (e) => {
                     if (e.target === wrapper || e.target === img) {
-                        isDragging = true;
+                        isDraggingWrapper = true;
                         dragOffsetX = e.clientX - wrapper.getBoundingClientRect().left;
                         dragOffsetY = e.clientY - wrapper.getBoundingClientRect().top;
                         wrapper.style.cursor = 'grabbing';
@@ -453,7 +502,7 @@
                 });
 
                 document.addEventListener('mousemove', (e) => {
-                    if (isDragging) {
+                    if (isDraggingWrapper) {
                         const containerRect = stickerContainer.getBoundingClientRect();
                         let newLeft = e.clientX - containerRect.left - dragOffsetX;
                         let newTop = e.clientY - containerRect.top - dragOffsetY;
@@ -463,11 +512,13 @@
 
                         wrapper.style.left = newLeft + 'px';
                         wrapper.style.top = newTop + 'px';
+                        wrapper.dataset.originalLeft = wrapper.style.left; // Update stored position
+                        wrapper.dataset.originalTop = wrapper.style.top;
                     }
                 });
 
                 document.addEventListener('mouseup', () => {
-                    isDragging = false;
+                    isDraggingWrapper = false;
                     wrapper.style.cursor = 'grab';
                 });
 
@@ -502,6 +553,7 @@
                         if (!isRotating) return;
                         const angle = Math.atan2(ev.clientY - centerY, ev.clientX - centerX);
                         wrapper.style.transform = `rotate(${angle}rad)`;
+                        wrapper.dataset.rotation = `${angle}rad`; // Update stored rotation
                     }
 
                     function stopRotate() {
@@ -512,6 +564,26 @@
 
                     document.addEventListener('mousemove', rotateMove);
                     document.addEventListener('mouseup', stopRotate);
+                });
+
+                // Dragging a sticker into the textarea for existing stickers
+                wrapper.addEventListener('dragstart', (e) => {
+                    const stickerData = {
+                        url: wrapper.dataset.dataUrl,
+                        left: wrapper.dataset.originalLeft,
+                        top: wrapper.dataset.originalTop,
+                        width: wrapper.style.width,
+                        height: wrapper.style.height,
+                        rotation: wrapper.dataset.rotation
+                    };
+                    e.dataTransfer.setData('text/plain', JSON.stringify(stickerData));
+                    e.dataTransfer.setData('text/x-sticker-id', wrapper.id || 'temp_sticker_id');
+                    e.dataTransfer.effectAllowed = 'copyMove';
+                    e.target.classList.add('dragging');
+                });
+
+                wrapper.addEventListener('dragend', (e) => {
+                    e.target.classList.remove('dragging');
                 });
 
             } catch (e) {

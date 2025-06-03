@@ -32,6 +32,26 @@
 <div class="streak-info">
     Current Streak: {{ current_streak }} days
 </div>
+<div class="streak-info-box">
+    {% if user.streak and user.streak.current_streak >= 100 %}
+         <span>Today badges:</span>
+         <img src="{{ url_for('static', filename='img/d100.png') }}" style="width: 400px; height: 400px; margin-bottom: 5px;">
+    {% elif user.streak and user.streak.current_streak >= 50 %}
+         <span>Today badges:</span>
+         <img src="{{ url_for('static', filename='img/d50.png') }}" style="width: 400px; height: 400px; margin-bottom: 5px;">
+    {% elif user.streak and user.streak.current_streak >= 30 %}
+         <span>Today badges:</span>
+         <img src="{{ url_for('static', filename='img/d30.png') }}" style="width: 400px; height: 400px; margin-bottom: 5px;">
+    {% elif user.streak and user.streak.current_streak >= 10 %}
+         <span>Today badges:</span>
+         <img src="{{ url_for('static', filename='img/d10.png') }}" style="width: 400px; height: 400px; margin-bottom: 5px;">
+    {% elif user.streak and user.streak.current_streak >= 1 %}
+        <span>Today badges:</span>
+        <img src="{{ url_for('static', filename='img/d1.png') }}" style="width: 400px; height: 400px; margin-bottom: 5px;">
+    {% else %}
+        <span>Current Streak: 0 days</span>
+    {% endif %}
+</div>
 {% endblock %}
 
 {% block scripts %}

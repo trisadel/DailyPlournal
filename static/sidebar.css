@@ -50,20 +50,6 @@
     width: 100%;
 }
 
-.interactive-elements {
-    display: flex;
-    gap: 10px;
-    margin-top: 10px;
-}
-
-.interactive-element {
-    width: 40px;
-    height: 40px;
-    background-color: #eee;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-}
-
 .streak-counter {
     font-size: 0.9em;
     color: #777;

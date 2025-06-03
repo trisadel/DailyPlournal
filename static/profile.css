@@ -50,6 +50,13 @@
     text-align: center;
 }
 
+.profile-stat-box img {
+    max-width: 80px; /* Adjust as needed */
+    height: auto;
+    display: block; /* Ensures proper centering */
+    margin: 0 auto 5px auto; /* Centers image horizontally and adds bottom margin */
+}
+
 .profile-stat-number {
     font-size: 1.5rem; /* Equivalent to text-2xl in Tailwind */
     font-weight: 700; /* Equivalent to font-bold in Tailwind */
