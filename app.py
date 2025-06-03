@@ -187,6 +187,9 @@ def new_journal_entry():
     current_streak = user.streak.current_streak if user.streak else 0
     return render_template('new_journal.html', user=user, today_date=today_date, current_streak=current_streak)
 
+    initial_stickers = []  # Just send an empty list for testing
+    return render_template('new_journal_entry.html', initial_stickers=initial_stickers)
+
 @app.route('/journal/view/<int:entry_id>')
 def view_journal_entry(entry_id):
     if 'user_id' not in session:
@@ -562,7 +565,4 @@ if __name__ == '__main__':
         db.create_all()  # Create tables within the app context
     app.run(debug=True)
 
-@app.route('/new', methods=['GET', 'POST'])
-def new_journal_entry():
-    initial_stickers = []  # Just send an empty list for testing
-    return render_template('new_journal_entry.html', initial_stickers=initial_stickers)
+
