@@ -46,9 +46,8 @@
                     <a href="{{ url_for('new_journal_entry') }}" id="write-link">Write</a>
                 </li>
                <li>
-                                    <a href="#">Journal Actions</a>
+                             <a href="#">Journal Actions</a>
                         <div class="journal-actions-filters">
-                            <input type="text" id="entrySearch" placeholder="Search titles...">
                             <input type="date" id="entryDateFilter">
                         </div>
                         <ul id="entryList">
@@ -56,8 +55,7 @@
                                 {% for entry in journal_entries %}
                                     <li>
                                         <a href="{{ url_for('view_journal_entry', entry_id=entry.id) }}"
-                                            data-date="{{ entry.date_posted.strftime('%Y-%m-%d') }}"
-                                            data-title="{{ entry.title | lower }}"> {# Added data-title here #}
+                                            data-date="{{ entry.date_posted.strftime('%Y-%m-%d') }}">
                                             {{ entry.title }} ({{ entry.date_posted.strftime('%Y-%m-%d') }})
                                         </a>
                                     </li>
@@ -99,42 +97,26 @@
             toggleBtn.classList.toggle('collapsed');
         });
 
-         // --- Journal entry filter logic ---
-            // Ensure these elements exist in your HTML
-            const searchInput = document.getElementById("entrySearch");
+         // --- Journal entry filter logic (by date only) ---
             const dateFilter = document.getElementById("entryDateFilter");
             const entryList = document.getElementById("entryList");
 
-            function filterEntries() {
-                // Get the current search text (converted to lowercase for case-insensitive search)
-                const searchText = searchInput.value.toLowerCase();
-                // Get the selected date from the date filter
-                const filterDate = dateFilter.value;
+            function filterEntriesByDate() {
+                const filterDate = dateFilter.value; // Get the selected date
 
-                // Iterate over each journal entry list item
                 Array.from(entryList.getElementsByTagName("li")).forEach((li) => {
                     const link = li.querySelector("a");
-                    // If there's no link, skip this list item
                     if (!link) return;
 
-                    // Get the title and date from the data attributes
-                    // Use || "" to ensure a default empty string if the attribute is missing
-                    const title = link.dataset.title || "";
-                    const date = link.dataset.date || "";
+                    const entryDate = link.dataset.date || ""; // Get the date from the data attribute
 
-                    // Check if the title includes the search text
-                    const matchesTitle = title.includes(searchText);
-                    // Check if the date matches the filter date, or if no date is filtered
-                    const matchesDate = !filterDate || date === filterDate;
-
-                    // Show or hide the list item based on whether both conditions are met
-                    li.style.display = matchesTitle && matchesDate ? "" : "none";
+                    // Show the entry if no date is selected or if the dates match
+                    li.style.display = !filterDate || entryDate === filterDate ? "" : "none";
                 });
             }
 
-            // Add event listeners to trigger filtering when inputs change
-            searchInput.addEventListener("input", filterEntries);
-            dateFilter.addEventListener("input", filterEntries);
+            // Add event listener to trigger filtering when the date input changes
+            dateFilter.addEventListener("input", filterEntriesByDate);
         </script>
         {% endblock %}
     {% endblock %}
