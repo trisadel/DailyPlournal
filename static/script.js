@@ -8,7 +8,7 @@ const quotes = [
     { text: "Change is scary, but change is growth.", author: "Unknown" },
     { text: "Be with someone who makes you happy.", author: "Unknown" },
     { text: "Go after dreams not people.", author: "Unknown" },
-    { text: "Happiness is not about getting all you want, It is about enjoying all you have.", author: "Unknown" }
+    { text: "Happiness is not about getting all you want, It is about enjoying all you have.", author: "Unknown" },
     { text: "Happiness is not about getting all you want, it is about enjoying all you have.", author: "Unknown" },
     { text: "Do not wait for the perfect moment. Take the moment and make it perfect.", author: "Unknown" },
     { text: "Life is short. Smile while you still have teeth.", author: "Unknown" },
@@ -58,7 +58,7 @@ const quotes = [
     { text: "Opportunities don't happen. You create them.", author: "Chris Grosser" },
     { text: "Success usually comes to those who are too busy to be looking for it.", author: "Henry David Thoreau" },
     { text: "If you really look closely, most overnight successes took a long time.", author: "Steve Jobs" },
-    { text: "Try not to become a man of success. Rather become a man of value.", author: "Albert Einstein" }
+    { text: "Try not to become a man of success. Rather become a man of value.", author: "Albert Einstein" },
     { text: "Life is 10% what happens to us and 90% how we react to it.", author: "Charles R. Swindoll" },
     { text: "Success is not how high you have climbed, but how you make a positive difference to the world.", author: "Roy T. Bennett" },
     { text: "The future depends on what you do today.", author: "Mahatma Gandhi" },
