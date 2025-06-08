@@ -27,19 +27,19 @@
         <div class="profile-stat-box">
             {% if user.streak and user.streak.current_streak >= 100 %}
            <img src="{{ url_for('static', filename='img/d100.png') }}" style="width: 80px; height: 80px; margin-bottom: 5px;">
-            <p class="profile-stat-label">Legendary Streak!</p>
+            <p class="profile-stat-label">Badges: Legendary Streak!</p>
             {% elif user.streak and user.streak.current_streak >= 50 %}
             <img src="{{ url_for('static', filename='img/d50.png') }}" style="width: 80px; height: 80px; margin-bottom: 5px;">
-            <p class="profile-stat-label">Half-Century Hero!</p>
+            <p class="profile-stat-label">Badges: Half-Century Hero!</p>
             {% elif user.streak and user.streak.current_streak >= 30 %}
             <img src="{{ url_for('static', filename='img/d30.png') }}" style="width: 80px; height: 80px; margin-bottom: 5px;">
-            <p class="profile-stat-label">On Fire Streak!</p>
+            <p class="profile-stat-label">Badges: On Fire Streak!</p>
             {% elif user.streak and user.streak.current_streak >= 10 %}
             <img src="{{ url_for('static', filename='img/d10.png') }}" style="width: 80px; height: 80px; margin-bottom: 5px;">
-            <p class="profile-stat-label">Building Momentum!</p>
+            <p class="profile-stat-label">Badges: Building Momentum!</p>
             {% elif user.streak and user.streak.current_streak >= 1 %}
             <img src="{{ url_for('static', filename='img/d1.png') }}" style="width: 80px; height: 80px; margin-bottom: 5px;">
-            <p class="profile-stat-label">The Spark!</p>
+            <p class="profile-stat-label">Badges: The Spark!</p>
             {% else %}
             <h2 class="profile-stat-number">0</h2>
             <p class="profile-stat-label">Current Streak</p>
@@ -50,6 +50,7 @@
             <p class="profile-stat-label">Current Streak</p>
         </div>
     </div>
+
 
     <div class="mb-6">
         <h3 class="recent-entries-header">Recent Journal Entries</h3>
