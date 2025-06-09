@@ -119,3 +119,21 @@ const quotes = [
   
   // Show a quote immediately when the page loads
   newQuote();
+    // dark mode
+  document.addEventListener("DOMContentLoaded",() => {
+    const toggleBtn = document.getElementById("darkModeToggle");
+    const body = document.body;
+
+    // load saved theme
+    if (localStorage.getItem("theme") === "dark") {
+      body.classList.add("dark-mode");
+    }
+
+    toggleBtn?.addEventListener("click", () => {
+      body.classList.toggle("dark-mode");
+
+      //save theme to local stogage
+      localStorage.setItem("theme", body.classList.contains("dark-mode") ? "dark" : "light" );  
+    })
+  })
+
