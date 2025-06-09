@@ -287,3 +287,27 @@ body {
   margin: 0;
   height: 100vh; /* Make sure the body takes the full viewport height */
 }
+/* dark mode */
+.dark-mode {
+  background-color: #121212;
+  color: #e0e0e0;
+}
+
+.dark-mode a {
+  color: #90caf9;
+}
+
+.dark-mode body {
+  background-image: url('static/img/darkjournalbg.jpeg');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.dark-mode .sidebar,
+.dark-mode .profile,
+.dark-mode .journal-entry,
+.dark-mode .header {
+  background-color: #1e1e1e;
+  color: #e0e0e0;
+}
