@@ -311,3 +311,9 @@ body {
   background-color: #1e1e1e;
   color: #e0e0e0;
 }
+.dark-mode .container {
+  background-image: linear-gradient(rgba(18, 18, 18, 0.8), rgba(18, 18, 18, 0.8)), url('static/img/darkjournalbg.jpeg');
+  background-size: cover;
+  background-position: center;
+}
+
