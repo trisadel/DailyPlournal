@@ -584,13 +584,12 @@ def sketchbook():
 
     # If you show journal entries or streaks in the sidebar
     journal_entries = JournalEntry.query.filter_by(user_id=user.id).order_by(JournalEntry.date_posted.desc()).all()
-    streak_count = calculate_streak(user.id)  # You might already have this function
 
     return render_template(
         'sketchbook.html',
         user=user,
         journal_entries=journal_entries,
-        current_streak=streak_count
+        
     )
 
 
