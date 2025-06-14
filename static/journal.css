@@ -4,7 +4,7 @@
     --h1-color: #343a40;
     --h1-border-bottom-color: #e9ecef;
     --p-color:#343a40;
-    --content-bg: #f0f2f5; /* Light grey for the overall content area */
+    --content-bg: url("{{ url_for('static', filename='img/journalbg.jpeg') }}") !important;
     --content-margin-left: 200px;
     --content-collapsed-margin-left: 60px;
     --journal-editor-bg: #fff;
@@ -47,7 +47,7 @@ body[data-theme="dark"] {
     --h1-color: #e0e0e0;
     --h1-border-bottom-color: #333;
     --p-color: #e0e0e0;
-    --content-bg: #222222;
+    --content-bg: url("{{ url_for('static', filename='img/darkjournalbg.jpeg') }}") !important;
     --content-margin-left: 200px;
     --content-collapsed-margin-left: 60px;
     --journal-editor-bg:#444;

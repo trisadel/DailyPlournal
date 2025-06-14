@@ -1,6 +1,6 @@
 /* CSS Variables for theming */
 :root {
-    --page-bg-color: #f8f9fa;
+    --page-bg: url("{{ url_for('static', filename='img/journalbg.jpeg') }}") !important;
     --content-margin-left: 200px;
     --content-collapsed-margin-left: 60px;
     --h1-color: #343a40;
@@ -39,7 +39,7 @@
 }
 
 body[data-theme="dark"] {
-    --page-bg-color: #1a1a1a;
+    --page-bg: url("{{ url_for('static', filename='img/darkjournalbg.jpeg') }}") !important;
     --content-margin-left: 200px; /* Adjust if needed for dark mode */
     --content-collapsed-margin-left: 60px; /* Adjust if needed for dark mode */
     --h1-color: #e0e0e0;
@@ -83,7 +83,7 @@ body[data-theme="dark"] {
     flex-direction: column;
     gap: 25px; /* Spacing between main sections */
     padding: 30px;
-    background-color: var(--page-bg-color); /* Light background for the dashboard */
+    background-color: var(--page-bg); /* Light background for the dashboard */
     min-height: calc(100vh - 60px); /* Adjust based on your header/footer height */
     margin-left: var(--content-margin-left); /* Aligns with sidebar */
     transition: margin-left 0.3s ease;
