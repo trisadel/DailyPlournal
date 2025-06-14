@@ -136,4 +136,3 @@ const quotes = [
       localStorage.setItem("theme", body.classList.contains("dark-mode") ? "dark" : "light" );  
     })
   })
-
