@@ -575,6 +575,7 @@ if __name__ == '__main__':
 
 @app.route('/sketchbook')
 def sketchbook():
-    return render_template('sketchbook.html', user=current_user, journal_entries=journal_entries, current_streak=streak_count)
+    return render_template('sketchbook.html')
+
 
 
