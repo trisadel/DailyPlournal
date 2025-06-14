@@ -63,27 +63,7 @@
             <input type="text" name="title" placeholder="Entry Title" required>
             <textarea id="journalText" name="content" placeholder="Start writing..." rows="10"></textarea>
 
-            <div class="sketchpad-section">
-                <h3>Sketchpad</h3>
-                <div class="sketchpad-controls-top">
-                    <label for="penColor">Pen Color:</label>
-                    <input type="color" id="penColor" value="#000000">
-                    <label for="penSize">Pen Size:</label>
-                    <input type="range" id="penSize" min="1" max="10" value="2">
-                    <span id="penSizeValue">2</span>
-                </div>
-                <canvas id="sketchpad" width="600" height="300" style="border:1px solid #ccc; background:white;"></canvas>
-                <div class="sketchpad-controls-bottom">
-                    <button type="button" id="clearSketch">Clear Sketch</button>
-                    <button type="button" id="addStickerBtn">Use as Sticker</button>
-                </div>
-            </div>
-
-            <div class="sticker-container" id="stickerContainer">
-                <h3>Interactive Stickers</h3>
-                <p>Drag and drop stickers here, or drag them into the journal text.</p>
-            </div>
-
+        
             <div class="btn-field">
                 <button type="submit">Save Entry</button>
             </div>
