@@ -17,14 +17,7 @@
     
     <!-- Background and Theme Styles -->
     <style>
-    :root {
-        --text-color: black;
-    }
-
-    body[data-theme="dark"] {
-        --text-color: white;
-    }
-
+    :root 
     body {
         background-image: url("{{ url_for('static', filename='img/journalbg.jpeg') }}") !important;
         background-size: cover;
@@ -109,9 +102,6 @@
                 </li>
                 <li><a href="{{ url_for('musicplayer') }}">Music Player</a></li>
                 <li><a href="{{ url_for('logout') }}">Log Out</a></li>
-                <div class="theme-toggle-container">
-                    <button id="themeToggle" class="theme-toggle-button">🌓 Toggle Theme</button>
-                </div>
             </ul>
         </nav>
     </div>

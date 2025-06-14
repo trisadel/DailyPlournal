@@ -3,10 +3,6 @@
     padding: 20px;
     margin-left: 200px;
     transition: margin-left 0.3s ease;
-    background:
-        url('img/journalbg.jpeg') no-repeat center center fixed,
-        linear-gradient(rgba(0, 0, 0, 0.814), rgba(0, 0, 0, 0.5));
-    background-size: cover;
 }
 
 .content.collapsed {

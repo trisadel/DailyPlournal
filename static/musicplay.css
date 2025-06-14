@@ -1,21 +1,5 @@
 /* CSS Variables for theming */
 :root {
-    /* Dark Mode Defaults */
-    --page-bg-color: #2a2a2a;
-    --card-bg-color: #1a1a1a;
-    --text-color: #f0f0f0;
-    --secondary-text-color: #ccc;
-    --primary-color: #6366F1; /* Your primary purple */
-    --primary-light-color: #c7d2fe; /* Lighter shade of primary */
-    --border-color: #4a4a4a;
-    --input-bg-color: #3a3a3a;
-    --input-text-color: #f0f0f0;
-    --shadow-color: rgba(0, 0, 0, 0.3);
-    --warning-color: #ffcc00;
-}
-
-body.light-mode {
-    /* Light Mode Overrides */
     --page-bg-color: #f0f2f5; /* Light grey background */
     --card-bg-color: #ffffff; /* White cards */
     --text-color: #333333;
@@ -28,7 +12,19 @@ body.light-mode {
     --shadow-color: rgba(0, 0, 0, 0.1);
     --warning-color: #d97706; /* A darker orange for warning */
 }
-
+    body[data-theme="dark"] {
+            --page-bg-color: #2a2a2a;
+            --card-bg-color: #1a1a1a;
+            --text-color: #f0f0f0;
+            --secondary-text-color: #ccc;
+            --primary-color: #6366F1; /* Your primary purple */
+            --primary-light-color: #c7d2fe; /* Lighter shade of primary */
+            --border-color: #4a4a4a;
+            --input-bg-color: #3a3a3a;
+            --input-text-color: #f0f0f0;
+            --shadow-color: rgba(0, 0, 0, 0.3);
+            --warning-color: #ffcc00;
+    }
 
 .music-player-page {
     max-width: 800px;
