@@ -1,41 +1,120 @@
+/* CSS Variables for theming */
+:root {
+    --page-bg-color: #f8f9fa;
+    --content-margin-left: 200px;
+    --content-collapsed-margin-left: 60px;
+    --h1-color: #343a40;
+    --h1-border-bottom-color: #e9ecef;
+    --p-color: #6c757d;
+
+    /* Daily Quote Section */
+    --daily-quote-bg-gradient-start: #a18cd1;
+    --daily-quote-bg-gradient-end: #fbc2eb;
+    --daily-quote-text-color: white;
+    --daily-quote-author-color: rgba(255, 255, 255, 0.8);
+    --daily-quote-button-bg: #ffffff;
+    --daily-quote-button-color: #6a1bb2;
+    --daily-quote-button-hover-bg: #f0f0f0;
+    --daily-quote-button-hover-color: #5a1599;
+    --daily-quote-box-shadow: rgba(0, 0, 0, 0.1);
+
+    /* Journal Entries Section */
+    --journal-entry-bg: #ffffff;
+    --journal-entry-border: #e0e0e0;
+    --journal-entry-box-shadow: rgba(0, 0, 0, 0.05);
+    --journal-entry-hover-box-shadow: rgba(0, 0, 0, 0.1);
+    --journal-entry-h2-color: #007bff;
+    --journal-entry-p-color: #555;
+    --journal-entry-small-color: #888;
+    --journal-entry-small-border-top: #e9ecef;
+
+    /* Streak Info Styling */
+    --streak-info-bg: #28a745;
+    --streak-info-color: white;
+    --streak-info-box-shadow: rgba(0, 0, 0, 0.1);
+    --streak-info-box-bg: #f0f8ff;
+    --streak-info-box-img-border: rgba(255, 255, 255, 0.7);
+    --streak-info-box-text-color: #333; /* Added for general text in streak-info-box */
+    --streak-info-box-shadow-subtle: rgba(0,0,0,0.1);
+}
+
+body[data-theme="dark"] {
+    --page-bg-color: #1a1a1a;
+    --content-margin-left: 200px; /* Adjust if needed for dark mode */
+    --content-collapsed-margin-left: 60px; /* Adjust if needed for dark mode */
+    --h1-color: #e0e0e0;
+    --h1-border-bottom-color: #333;
+    --p-color: #b0b0b0;
+
+    /* Daily Quote Section */
+    --daily-quote-bg-gradient-start: #5a3d7d; /* Darker gradient */
+    --daily-quote-bg-gradient-end: #a15a8c;
+    --daily-quote-text-color: #f0f0f0;
+    --daily-quote-author-color: rgba(240, 240, 240, 0.8);
+    --daily-quote-button-bg: #333333;
+    --daily-quote-button-color: #fbc2eb;
+    --daily-quote-button-hover-bg: #555555;
+    --daily-quote-button-hover-color: #fff;
+    --daily-quote-box-shadow: rgba(0, 0, 0, 0.3);
+
+    /* Journal Entries Section */
+    --journal-entry-bg: #2a2a2a;
+    --journal-entry-border: #444444;
+    --journal-entry-box-shadow: rgba(0, 0, 0, 0.2);
+    --journal-entry-hover-box-shadow: rgba(0, 0, 0, 0.4);
+    --journal-entry-h2-color: #6fa8dc; /* Lighter blue for dark mode */
+    --journal-entry-p-color: #cccccc;
+    --journal-entry-small-color: #aaaaaa;
+    --journal-entry-small-border-top: #444444;
+
+    /* Streak Info Styling */
+    --streak-info-bg: #1e8449; /* Darker green for dark mode */
+    --streak-info-color: #f0f0f0;
+    --streak-info-box-shadow: rgba(0, 0, 0, 0.3);
+    --streak-info-box-bg: #333d47; /* Darker background for streak box */
+    --streak-info-box-img-border: rgba(0, 0, 0, 0.7);
+    --streak-info-box-text-color: #ccc; /* Text color for dark mode */
+    --streak-info-box-shadow-subtle: rgba(0,0,0,0.2);
+}
+
 /* General Dashboard Layout */
 .content {
     display: flex;
     flex-direction: column;
     gap: 25px; /* Spacing between main sections */
     padding: 30px;
-    background-color: #f8f9fa; /* Light background for the dashboard */
+    background-color: var(--page-bg-color); /* Light background for the dashboard */
     min-height: calc(100vh - 60px); /* Adjust based on your header/footer height */
-    margin-left: 200px; /* Aligns with sidebar */
+    margin-left: var(--content-margin-left); /* Aligns with sidebar */
     transition: margin-left 0.3s ease;
 }
 
 .content.collapsed {
-    margin-left: 60px; /* When sidebar is collapsed */
+    margin-left: var(--content-collapsed-margin-left); /* When sidebar is collapsed */
 }
 
 h1 {
-    color: #343a40;
+    color: var(--h1-color);
     margin-bottom: 20px;
     font-size: 2.5em;
-    border-bottom: 2px solid #e9ecef;
+    border-bottom: 2px solid var(--h1-border-bottom-color);
     padding-bottom: 10px;
     margin-left: 10px;
 }
 
 p {
-    color: #6c757d;
+    color: var(--p-color);
     font-size: 1.1em;
     margin-left: 10px;
 }
 
 /* Daily Quote Section Styling */
 .daily-quote-section {
-    background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%); /* Softer gradient */
+    background: linear-gradient(135deg, var(--daily-quote-bg-gradient-start) 0%, var(--daily-quote-bg-gradient-end) 100%); /* Softer gradient */
     padding: 30px;
     border-radius: 12px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-    color: white;
+    box-shadow: 0 5px 15px var(--daily-quote-box-shadow);
+    color: var(--daily-quote-text-color);
     text-align: center;
     margin-bottom: 30px;
 }
@@ -43,19 +122,19 @@ p {
 .daily-quote-section .quote-container h1 {
     font-size: 1.8em;
     margin-bottom: 15px;
-    color: white; /* Ensure text is white against gradient */
+    color: var(--daily-quote-text-color); /* Ensure text is white against gradient */
     border-bottom: none; /* No border for quote text */
 }
 
 .daily-quote-section .quote-container p {
     font-size: 1.2em;
     font-style: italic;
-    color: rgba(255, 255, 255, 0.8); /* Slightly transparent white for author */
+    color: var(--daily-quote-author-color); /* Slightly transparent white for author */
 }
 
 .daily-quote-section button {
-    background-color: #ffffff;
-    color: #6a1bb2; /* A color from the gradient palette */
+    background-color: var(--daily-quote-button-bg);
+    color: var(--daily-quote-button-color); /* A color from the gradient palette */
     border: none;
     padding: 12px 25px;
     border-radius: 8px;
@@ -66,8 +145,8 @@ p {
 }
 
 .daily-quote-section button:hover {
-    background-color: #f0f0f0;
-    color: #5a1599;
+    background-color: var(--daily-quote-button-hover-bg);
+    color: var(--daily-quote-button-hover-color);
 }
 
 /* Journal Entries Section */
@@ -78,28 +157,28 @@ p {
 }
 
 .journal-entry {
-    background-color: #ffffff;
-    border: 1px solid #e0e0e0;
+    background-color: var(--journal-entry-bg);
+    border: 1px solid var(--journal-entry-border);
     border-radius: 8px;
     padding: 20px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 2px 10px var(--journal-entry-box-shadow);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .journal-entry:hover {
     transform: translateY(-5px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 5px 15px var(--journal-entry-hover-box-shadow);
 }
 
 .journal-entry h2 {
-    color: #007bff; /* Blue for entry titles */
+    color: var(--journal-entry-h2-color); /* Blue for entry titles */
     margin-top: 0;
     margin-bottom: 10px;
     font-size: 1.6em;
 }
 
 .journal-entry p {
-    color: #555;
+    color: var(--journal-entry-p-color);
     line-height: 1.6;
     margin-bottom: 10px;
     /* Limit height and add scrollbar if content is too long */
@@ -108,24 +187,24 @@ p {
 }
 
 .journal-entry small {
-    color: #888;
+    color: var(--journal-entry-small-color);
     font-size: 0.9em;
     display: block; /* Ensures it takes full width */
     margin-top: 15px;
     padding-top: 10px;
-    border-top: 1px dashed #e9ecef;
+    border-top: 1px dashed var(--journal-entry-small-border-top);
 }
 
 /* Streak Info Styling */
 .streak-info {
-    background-color: #28a745; /* Green for streak */
-    color: white;
+    background-color: var(--streak-info-bg); /* Green for streak */
+    color: var(--streak-info-color);
     padding: 20px;
     border-radius: 8px;
     text-align: center;
     font-size: 1.3em;
     font-weight: bold;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 10px var(--streak-info-box-shadow);
     margin-top: 20px; /* Space from journal entries */
 }
 
@@ -134,19 +213,20 @@ p {
     align-items: center; /* Vertically centers items */
     gap: 10px; /* Space between the image and text */
     padding: 15px 20px; /* Add some padding around the section */
-    background-color: #f0f8ff; /* Light background for the streak info */
+    background-color: var(--streak-info-box-bg); /* Light background for the streak info */
     border-radius: 8px; /* Rounded corners */
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* Subtle shadow */
+    box-shadow: 0 2px 5px var(--streak-info-box-shadow-subtle); /* Subtle shadow */
     display: block; /* Ensures proper centering */
+    color: var(--streak-info-box-text-color); /* Apply text color to the box content */
 }
 .streak-info-box img {
     display: block; /* Ensures proper centering */
     margin: 0 auto 5px auto; /* Centers image horizontally and adds bottom margin */
-    border: 3px solid rgba(255, 255, 255, 0.7); /* White border around the image */
+    border: 3px solid var(--streak-info-box-img-border); /* White border around the image */
 }
 
 .streak-info-box span {
     font-weight: 600; /* Bold text */
-    line-height: 1.4; /* Improve line spacing */ 
+    line-height: 1.4; /* Improve line spacing */
     font-size: 1.1em;
 }

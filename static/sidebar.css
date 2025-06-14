@@ -1,12 +1,59 @@
+/* CSS Variables for theming */
+:root {
+    --sidebar-font-color: #00000032;
+    --sidebar-bg: #f8f8f8;
+    --sidebar-border-right: #eee;
+    --sidebar-logo-color: #4A5568; /* Re-evaluate if this should be a variable or fixed for branding */
+
+    --profile-section-name-field-border: #ccc;
+    --profile-section-name-field-color: #333;
+    --profile-section-name-field-bg: #fff;
+
+    --streak-counter-color: #777;
+
+    --nav-link-color: #555;
+    --nav-link-hover-bg: #eee;
+    --nav-link-hover-color: #333; /* Added for hover text color */
+
+    --journal-actions-input-border: #ccc;
+    --journal-actions-input-bg: #fff;
+    --journal-actions-input-color: #333;
+
+    --toggle-btn-color: #333; /* Default color for the toggle button */
+}
+
+body[data-theme="dark"] {
+    --sidebar-font-color: #cccccc;
+    --sidebar-bg: #2a2a2a;
+    --sidebar-border-right: #444;
+    --sidebar-logo-color: #e0e0e0;
+
+    --profile-section-name-field-border: #555;
+    --profile-section-name-field-color: #f0f0f0;
+    --profile-section-name-field-bg: #3a3a3a;
+
+    --streak-counter-color: #aaaaaa;
+
+    --nav-link-color: #cccccc;
+    --nav-link-hover-bg: #3a3a3a;
+    --nav-link-hover-color: #f0f0f0;
+
+    --journal-actions-input-border: #555;
+    --journal-actions-input-bg: #3a3a3a;
+    --journal-actions-input-color: #f0f0f0;
+
+    --toggle-btn-color: #f0f0f0;
+}
+
 .sidebar {
     font-family: 'Comfortaa', cursive; /* 'cursive' is a good general fallback for cute/handwritten fonts */
     font-size: 16px; /* Adjust as needed */
-    color: #00000032; /* Or any color that fits your cute theme */
-    background-color: #f8f8f8;
+    color: var(--sidebar-font-color); /* Or any color that fits your cute theme */
+    background-color: var(--sidebar-bg);
     width: 200px;
     height: 100vh;
     padding: 20px;
-    border-right: 1px solid #eee;
+    border-right: 1px solid var(--sidebar-border-right);
     position: fixed;
     top: 0;
     left: 0;
@@ -23,10 +70,9 @@
 
 .sidebar-logo {
     font-family: 'Comfortaa', cursive; /* 'cursive' is a good general fallback for cute/handwritten fonts */
-    color: #4A5568; /* Or any color that fits your cute theme */
+    color: var(--sidebar-logo-color);
     font-size: 1.5em;
     font-weight: bold;
-    color: #333;
     margin-bottom: 20px;
     text-align: center;
 }
@@ -43,22 +89,23 @@
     width: 60px;
     height: 60px;
     border-radius: 50%;
-    background-color: #ccc;
+    background-color: #ccc; /* This might still be a fixed color as it's an icon placeholder */
     margin-bottom: 5px;
 }
 
 .name-field {
-    
     padding: 8px;
-    border: 1px solid #ccc;
+    border: 1px solid var(--profile-section-name-field-border);
     border-radius: 4px;
     text-align: center;
     width: 100%;
+    color: var(--profile-section-name-field-color);
+    background-color: var(--profile-section-name-field-bg);
 }
 
 .streak-counter {
     font-size: 0.9em;
-    color: #777;
+    color: var(--streak-counter-color);
     margin-top: 10px;
     text-align: center;
 }
@@ -76,7 +123,7 @@
 
 .sidebar-nav ul li a {
     text-decoration: none;
-    color: #555;
+    color: var(--nav-link-color);
     font-weight: 500;
     display: block;
     padding: 10px 15px;
@@ -85,7 +132,8 @@
 }
 
 .sidebar-nav ul li a:hover {
-    background-color: #eee;
+    background-color: var(--nav-link-hover-bg);
+    color: var(--nav-link-hover-color);
 }
 
 .sidebar-nav ul li ul {
@@ -122,6 +170,7 @@
     cursor: pointer;
     font-size: 1.5em;
     transition: left 0.3s ease;
+    color: var(--toggle-btn-color); /* Apply color variable */
 }
 
 .toggle-btn.collapsed {
@@ -136,12 +185,12 @@
 .sidebar-nav input[type="text"],
 .sidebar-nav input[type="date"] {
     padding: 6px;
-    border: 1px solid #ccc;
+    border: 1px solid var(--journal-actions-input-border);
     border-radius: 6px;
     font-size: 14px;
     margin-bottom: 8px;
-    background-color: #fff;
-    color: #333;
+    background-color: var(--journal-actions-input-bg);
+    color: var(--journal-actions-input-color);
 }
 
 .sidebar-nav .journal-actions-filters {

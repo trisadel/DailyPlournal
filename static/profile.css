@@ -1,12 +1,75 @@
+/* CSS Variables for theming */
+:root {
+    --profile-container-bg: #ffffff;
+    --profile-container-box-shadow: rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.06);
+
+    --profile-avatar-border: #e0e7ff;
+    --profile-avatar-box-shadow: rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.06);
+
+    --profile-name-color: #2d3748;
+    --profile-info-color: #4a5568;
+
+    --profile-stat-box-bg: #f3f0ff;
+    --profile-stat-box-box-shadow: rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.06);
+    --profile-stat-number-color: #7b46c2;
+    --profile-stat-label-color: #718096;
+
+    --recent-entries-header-color: #4a5568;
+
+    --recent-entry-box-bg: #f3f0ff;
+    --recent-entry-box-border: #e2e8f0;
+    --recent-entry-box-hover-bg: #f7fafc;
+
+    --entry-date-color: #718096;
+    --entry-title-color: #2d3748;
+    --entry-excerpt-color: #4a5568;
+
+    --new-entry-button-bg: #805ad5;
+    --new-entry-button-color: #ffffff;
+    --new-entry-button-hover-bg: #6b46c1;
+    --new-entry-button-box-shadow: rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.06);
+}
+
+body[data-theme="dark"] {
+    --profile-container-bg: #1a1a1a;
+    --profile-container-box-shadow: rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.2);
+
+    --profile-avatar-border: #4a4a4a;
+    --profile-avatar-box-shadow: rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.2);
+
+    --profile-name-color: #f0f0f0;
+    --profile-info-color: #cccccc;
+
+    --profile-stat-box-bg: #3a3a3a;
+    --profile-stat-box-box-shadow: rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.1);
+    --profile-stat-number-color: #a18cd1;
+    --profile-stat-label-color: #aaaaaa;
+
+    --recent-entries-header-color: #cccccc;
+
+    --recent-entry-box-bg: #2a2a2a;
+    --recent-entry-box-border: #444444;
+    --recent-entry-box-hover-bg: #3a3a3a;
+
+    --entry-date-color: #718096;
+    --entry-title-color: #f0f0f0;
+    --entry-excerpt-color: #f0f0f0ee;
+
+    --new-entry-button-bg: #6b46c1;
+    --new-entry-button-color: #f0f0f0;
+    --new-entry-button-hover-bg: #5a3d7d;
+    --new-entry-button-box-shadow: rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.1);
+}
+
 .profile-container {
     max-width: 4xl; /* Equivalent to max-w-4xl in Tailwind */
     margin-left: auto;
     margin-right: auto;
     margin-top: 2.5rem; /* Roughly equivalent to mt-10 in Tailwind */
     padding: 2rem; /* Equivalent to p-8 in Tailwind */
-    background-color: #ffffff; /* Equivalent to bg-white in Tailwind */
+    background-color: var(--profile-container-bg);
     border-radius: 1rem; /* Equivalent to rounded-2xl in Tailwind */
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* Rough equivalent to shadow-lg in Tailwind */
+    box-shadow: 0 4px 6px -1px var(--profile-container-box-shadow), 0 2px 4px -1px var(--profile-container-box-shadow); /* Rough equivalent to shadow-lg in Tailwind */
 }
 
 .profile-header {
@@ -20,18 +83,18 @@
     width: 6rem; /* Equivalent to w-24 in Tailwind */
     height: 6rem; /* Equivalent to h-24 in Tailwind */
     border-radius: 9999px; /* Equivalent to rounded-full in Tailwind */
-    border: 0.25rem solid #e0e7ff; /* Rough equivalent to ring-4 ring-purple-200 in Tailwind */
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* Rough equivalent to shadow-md in Tailwind */
+    border: 0.25rem solid var(--profile-avatar-border);
+    box-shadow: 0 4px 6px -1px var(--profile-avatar-box-shadow), 0 2px 4px -1px var(--profile-avatar-box-shadow); /* Rough equivalent to shadow-md in Tailwind */
 }
 
 .profile-name {
     font-size: 1.875rem; /* Equivalent to text-3xl in Tailwind */
     font-weight: 700; /* Equivalent to font-bold in Tailwind */
-    color: #2d3748; /* Rough equivalent to text-gray-800 in Tailwind */
+    color: var(--profile-name-color);
 }
 
 .profile-info {
-    color: #4a5568; /* Rough equivalent to text-gray-600 in Tailwind */
+    color: var(--profile-info-color);
     font-size: 0.875rem; /* Equivalent to text-sm in Tailwind */
 }
 
@@ -44,9 +107,9 @@
 
 .profile-stat-box {
     padding: 1.5rem; /* Equivalent to p-6 in Tailwind */
-    background-color: #f3f0ff; /* Equivalent to bg-purple-50 in Tailwind */
+    background-color: var(--profile-stat-box-bg);
     border-radius: 0.75rem; /* Equivalent to rounded-xl in Tailwind */
-    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06); /* Rough equivalent to shadow in Tailwind */
+    box-shadow: 0 1px 3px 0 var(--profile-stat-box-box-shadow), 0 1px 2px 0 var(--profile-stat-box-box-shadow); /* Rough equivalent to shadow in Tailwind */
     text-align: center;
 }
 
@@ -60,18 +123,18 @@
 .profile-stat-number {
     font-size: 1.5rem; /* Equivalent to text-2xl in Tailwind */
     font-weight: 700; /* Equivalent to font-bold in Tailwind */
-    color: #7b46c2; /* Equivalent to text-purple-600 in Tailwind */
+    color: var(--profile-stat-number-color);
 }
 
 .profile-stat-label {
-    color: #718096; /* Rough equivalent to text-gray-600 in Tailwind */
+    color: var(--profile-stat-label-color);
     font-size: 0.875rem; /* Equivalent to text-sm in Tailwind */
 }
 
 .recent-entries-header {
     font-size: 1.125rem; /* Equivalent to text-lg in Tailwind */
     font-weight: 600; /* Equivalent to font-semibold in Tailwind */
-    color: #4a5568; /* Rough equivalent to text-gray-700 in Tailwind */
+    color: var(--recent-entries-header-color);
     margin-bottom: 1rem; /* Equivalent to mb-4 in Tailwind */
 }
 
@@ -82,29 +145,29 @@
 }
 
 .recent-entry-box {
-    background-color: #ffffff; /* Equivalent to bg-white in Tailwind */
+    background-color: var(--recent-entry-box-bg);
     padding: 1rem; /* Equivalent to p-4 in Tailwind */
     border-radius: 0.75rem; /* Equivalent to rounded-xl in Tailwind */
-    border: 1px solid #e2e8f0; /* Equivalent to border in Tailwind */
+    border: 1px solid var(--recent-entry-box-border);
     transition: background-color 0.15s ease-in-out; /* Rough equivalent to transition in Tailwind */
 }
 
 .recent-entry-box:hover {
-    background-color: #f7fafc; /* Equivalent to hover:bg-gray-50 in Tailwind */
+    background-color: var(--recent-entry-box-hover-bg);
 }
 
 .entry-date {
-    color: #718096; /* Rough equivalent to text-gray-500 in Tailwind */
+    color: var(--entry-date-color);
     font-weight: 600; /* Equivalent to font-semibold in Tailwind */
 }
 
 .entry-title {
-    color: #2d3748; /* Rough equivalent to text-gray-800 in Tailwind */
+    color: var(--entry-title-color);
     font-weight: 700; /* Equivalent to font-bold in Tailwind */
 }
 
 .entry-excerpt {
-    color: #4a5568; /* Rough equivalent to text-gray-600 in Tailwind */
+    color: var(--entry-excerpt-color);
     font-size: 0.875rem; /* Equivalent to text-sm in Tailwind */
 }
 
@@ -115,16 +178,16 @@
     padding-right: 1.25rem; /* Equivalent to px-5 in Tailwind */
     padding-top: 0.5rem; /* Equivalent to py-2 in Tailwind */
     padding-bottom: 0.5rem; /* Equivalent to py-2 in Tailwind */
-    background-color: #805ad5; /* Equivalent to bg-purple-600 in Tailwind */
-    color: #ffffff; /* Equivalent to text-white in Tailwind */
+    background-color: var(--new-entry-button-bg);
+    color: var(--new-entry-button-color);
     font-weight: 500; /* Equivalent to font-medium in Tailwind */
     border-radius: 0.75rem; /* Equivalent to rounded-xl in Tailwind */
     transition: background-color 0.15s ease-in-out; /* Rough equivalent to transition in Tailwind */
-    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06); /* Rough equivalent to shadow in Tailwind */
+    box-shadow: 0 1px 3px 0 var(--new-entry-button-box-shadow), 0 1px 2px 0 var(--new-entry-button-box-shadow); /* Rough equivalent to shadow in Tailwind */
 }
 
 .new-entry-button:hover {
-    background-color: #6b46c1; /* Equivalent to hover:bg-purple-700 in Tailwind */
+    background-color: var(--new-entry-button-hover-bg);
 }
 
 .new-entry-button svg {

@@ -1,9 +1,166 @@
+/* CSS Variables for theming */
+:root {
+    --planner-wrapper-padding: 20px;
+    --planner-container-bg: #ffffff;
+    --planner-container-border: #dee2e6;
+
+    --toggle-button-bg: #6c757d;
+    --toggle-button-color: white;
+    --toggle-button-hover-bg: #5a6268;
+
+    --planner-controls-button-bg: #f8f9fa;
+    --planner-controls-button-color: #495057;
+    --planner-controls-button-border: #ced4da;
+    --planner-controls-button-hover-bg: #e9ecef;
+
+    --current-label-color: #343a40;
+
+    --calendar-grid-gap: 1px;
+    --calendar-grid-bg: #dee2e6;
+    --calendar-header-bg: #f8f9fa;
+    --calendar-header-color: #6c757d;
+
+    --calendar-cell-bg: #ffffff;
+    --calendar-cell-hover-bg: #e9ecef;
+    --calendar-cell-hover-border: #adb5bd;
+    --calendar-cell-day-color: #343a40;
+
+    --calendar-today-bg: #e7f3ff;
+    --calendar-today-border: #007bff;
+
+    --calendar-selected-bg: #ffe3e0;
+    --calendar-selected-border: #dc3545;
+
+    --note-preview-color: #6c757d;
+    --section-preview-color: #6c757d;
+
+    --bottom-section-bg: #ffffff;
+    --bottom-section-border: #dee2e6;
+    --bottom-section-h3-color: #007bff;
+    --bottom-section-h3-border-bottom: #007bff;
+
+    --textarea-border: #ced4da;
+    --textarea-bg: #ffffff; /* Explicitly set for planner textarea */
+    --textarea-color: #333; /* Explicitly set for planner textarea */
+
+    --habit-tracker-section-border: #e9ecef;
+    --habit-tracker-section-bg: #f8f9fa;
+
+    --input-group-input-border: #ced4da;
+    --input-group-input-bg: #ffffff; /* Explicitly set for inputs in planner */
+    --input-group-input-color: #333; /* Explicitly set for inputs in planner */
+
+    --btn-green-bg: #28a745;
+    --btn-green-hover-bg: #218838;
+
+    --habit-item-bg: #f8f9fa;
+    --habit-item-border: #e9ecef;
+    --habit-item-strong-color: #343a40;
+
+    --btn-red-bg: #dc3545;
+    --btn-red-hover-bg: #c82333;
+
+    --custom-section-item-bg: #f8f9fa;
+    --custom-section-item-border: #e9ecef;
+    --custom-section-item-h4-color: #007bff;
+    --custom-section-item-h4-border-bottom: #cfe2ff;
+    --custom-section-item-p-color: #555;
+
+    --add-slot-btn-bg: #17a2b8;
+    --add-slot-btn-hover-bg: #138496;
+
+    --time-slot-input-border: #ced4da;
+    --time-slot-input-bg: #ffffff;
+    --time-slot-input-color: #333;
+
+    --time-slot-btn-bg: #6c757d;
+    --time-slot-btn-hover-bg: #5a6268;
+}
+
+body[data-theme="dark"] {
+    --planner-wrapper-padding: 20px;
+    --planner-container-bg: #444444;
+    --planner-container-border: #2a2a2a;
+
+    --toggle-button-bg: #555555;
+    --toggle-button-color: #f0f0f0;
+    --toggle-button-hover-bg: #777777;
+
+    --planner-controls-button-bg: #3a3a3a;
+    --planner-controls-button-color: #cccccc;
+    --planner-controls-button-border: #555555;
+    --planner-controls-button-hover-bg: #4a4a4a;
+
+    --current-label-color: #e0e0e0;
+
+    --calendar-grid-gap: 1px;
+    --calendar-grid-bg: #444444;
+    --calendar-header-bg: #3a3a3a;
+    --calendar-header-color: #cccccc;
+
+    --calendar-cell-bg: #1a1a1a;
+    --calendar-cell-hover-bg: #333333;
+    --calendar-cell-hover-border: #666666;
+    --calendar-cell-day-color: #e0e0e0;
+
+    --calendar-today-bg: #2a3d4f; /* Darker blue for today */
+    --calendar-today-border: #0056b3;
+
+    --calendar-selected-bg: #4f2a2a; /* Darker red for selected */
+    --calendar-selected-border: #990000;
+
+    --note-preview-color: #aaaaaa;
+    --section-preview-color: #aaaaaa;
+
+    --bottom-section-bg: #2a2a2a;
+    --bottom-section-border: #444444;
+    --bottom-section-h3-color: #6fa8dc;
+    --bottom-section-h3-border-bottom: #6fa8dc;
+
+    --textarea-border: #555555;
+    --textarea-bg: #333333;
+    --textarea-color: #f0f0f0;
+
+    --habit-tracker-section-border: #444444;
+    --habit-tracker-section-bg: #3a3a3a;
+
+    --input-group-input-border: #555555;
+    --input-group-input-bg: #333333;
+    --input-group-input-color: #f0f0f0;
+
+    --btn-green-bg: #1e8449;
+    --btn-green-hover-bg: #156d38;
+
+    --habit-item-bg: #3a3a3a;
+    --habit-item-border: #4a4a4a;
+    --habit-item-strong-color: #e0e0e0;
+
+    --btn-red-bg: #990000;
+    --btn-red-hover-bg: #660000;
+
+    --custom-section-item-bg: #3a3a3a;
+    --custom-section-item-border: #4a4a4a;
+    --custom-section-item-h4-color: #6fa8dc;
+    --custom-section-item-h4-border-bottom: #3d5a7a;
+    --custom-section-item-p-color: #cccccc;
+
+    --add-slot-btn-bg: #0f7b8b;
+    --add-slot-btn-hover-bg: #0a5d6a;
+
+    --time-slot-input-border: #555555;
+    --time-slot-input-bg: #333333;
+    --time-slot-input-color: #f0f0f0;
+
+    --time-slot-btn-bg: #555555;
+    --time-slot-btn-hover-bg: #777777;
+}
+
 /* General Body and Layout */
 
 /* Specific styling for the toggle button */
 #toggleUIBtn2 {
-    background-color: #6c757d; /* A subtle grey for the button */
-    color: white;
+    background-color: var(--toggle-button-bg); /* A subtle grey for the button */
+    color: var(--toggle-button-color);
     border: none; /* No border for a cleaner look */
     padding: 8px 15px;
     border-radius: 6px;
@@ -15,7 +172,7 @@
 }
 
 #toggleUIBtn2:hover {
-    background-color: #5a6268; /* Slightly darker grey on hover */
+    background-color: var(--toggle-button-hover-bg); /* Slightly darker grey on hover */
     transform: translateY(-1px); /* Subtle lift effect */
 }
 
@@ -24,7 +181,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 20px;
+    padding: var(--planner-wrapper-padding);
     max-width: 1200px;
     margin: 20px auto;
     box-sizing: border-box;
@@ -32,10 +189,10 @@
 
 .planner-container {
     width: 100%;
-    background-color: #ffffff;
+    background-color: var(--planner-container-bg);
     padding: 20px;
     border-radius: 8px;
-    border: 1px solid #dee2e6; /* Light grey border */
+    border: 1px solid var(--planner-container-border);
     margin-bottom: 20px;
     box-shadow: none; /* Removed box shadow for a flatter look */
 }
@@ -51,9 +208,9 @@
 }
 
 .planner-controls button {
-    background-color: #f8f9fa; /* Light background for buttons */
-    color: #495057; /* Dark grey text for buttons */
-    border: 1px solid #ced4da; /* Light grey button border */
+    background-color: var(--planner-controls-button-bg);
+    color: var(--planner-controls-button-color);
+    border: 1px solid var(--planner-controls-button-border);
     padding: 8px 15px;
     border-radius: 6px;
     cursor: pointer;
@@ -62,13 +219,13 @@
 }
 
 .planner-controls button:hover {
-    background-color: #e9ecef; /* Slightly darker hover */
+    background-color: var(--planner-controls-button-hover-bg);
 }
 
 .planner-controls #currentLabel {
     font-size: 1.3rem;
     font-weight: 500;
-    color: #343a40;
+    color: var(--current-label-color);
     min-width: 150px;
     text-align: center;
 }
@@ -77,23 +234,23 @@
 #calendar {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    gap: 1px; /* Minimal gap for border effect */
-    background-color: #dee2e6; /* Light grey background for grid lines */
+    gap: var(--calendar-grid-gap); /* Minimal gap for border effect */
+    background-color: var(--calendar-grid-bg); /* Light grey background for grid lines */
     border-radius: 8px;
     overflow: hidden; /* Hide overflow to maintain rounded corners */
 }
 
 .planner-calendar-header {
-    background-color: #f8f9fa;
+    background-color: var(--calendar-header-bg);
     font-weight: 500;
     padding: 10px 5px;
     text-align: center;
-    color: #6c757d;
+    color: var(--calendar-header-color);
     font-size: 0.85rem;
 }
 
 .planner-calendar-cell {
-    background-color: #ffffff;
+    background-color: var(--calendar-cell-bg);
     padding: 10px 8px;
     text-align: left; /* Align content to the left for a cleaner look */
     min-height: 70px;
@@ -107,22 +264,23 @@
     position: relative;
     overflow: hidden;
     border: 1px solid transparent; /* Transparent border for hover effect */
+    color: var(--planner-controls-button-color); /* Default text color for cells */
 }
 
 .planner-calendar-cell:hover {
-    background-color: #e9ecef;
-    border: 1px solid #adb5bd; /* Subtle border on hover */
+    background-color: var(--calendar-cell-hover-bg);
+    border: 1px solid var(--calendar-cell-hover-border); /* Subtle border on hover */
 }
 
 .planner-today {
-    background-color: #e7f3ff; /* Light blue for today */
-    border: 1px solid #007bff;
+    background-color: var(--calendar-today-bg);
+    border: 1px solid var(--calendar-today-border);
     font-weight: 500;
 }
 
 .planner-selected {
-    background-color: #ffe3e0; /* Light red for selected */
-    border: 1px solid #dc3545;
+    background-color: var(--calendar-selected-bg);
+    border: 1px solid var(--calendar-selected-border);
     font-weight: 500;
 }
 
@@ -130,13 +288,13 @@
     font-size: 1em;
     margin-bottom: 3px;
     display: block; /* Ensure day number is on its own line */
-    color: #343a40;
+    color: var(--calendar-cell-day-color);
 }
 
 /* Note and Section Previews in Calendar Cells */
 .planner-note-preview, .planner-section-preview {
     font-size: 0.7rem;
-    color: #6c757d;
+    color: var(--note-preview-color);
     margin-top: 2px;
     word-break: break-word;
 }
@@ -146,17 +304,17 @@
     display: flex;
     flex-direction: column;
     width: 100%;
-    background-color: #ffffff;
+    background-color: var(--bottom-section-bg);
     padding: 20px;
     border-radius: 8px;
-    border: 1px solid #dee2e6;
+    border: 1px solid var(--bottom-section-border);
     gap: 20px;
     box-shadow: none; /* Removed box shadow */
 }
 
 .planner-bottom-section h3 {
-    color: #007bff;
-    border-bottom: 2px solid #007bff;
+    color: var(--bottom-section-h3-color);
+    border-bottom: 2px solid var(--bottom-section-h3-border-bottom);
     padding-bottom: 8px;
     margin-top: 0;
     margin-bottom: 12px;
@@ -167,19 +325,21 @@
     width: 100%;
     min-height: 100px;
     padding: 10px;
-    border: 1px solid #ced4da;
+    border: 1px solid var(--textarea-border);
     border-radius: 6px;
     font-family: inherit;
     font-size: 0.9rem;
     resize: vertical;
     box-sizing: border-box;
+    background-color: var(--textarea-bg);
+    color: var(--textarea-color);
 }
 
 .planner-habit-tracker-section, .planner-custom-sections {
-    border: 1px solid #e9ecef;
+    border: 1px solid var(--habit-tracker-section-border);
     padding: 15px;
     border-radius: 8px;
-    background-color: #f8f9fa;
+    background-color: var(--habit-tracker-section-bg);
 }
 
 .planner-input-group {
@@ -196,15 +356,17 @@
 .planner-habit-input {
     flex-grow: 1;
     padding: 8px 10px;
-    border: 1px solid #ced4da;
+    border: 1px solid var(--input-group-input-border);
     border-radius: 6px;
     font-size: 0.9rem;
     box-sizing: border-box;
+    background-color: var(--input-group-input-bg);
+    color: var(--input-group-input-color);
 }
 
 .planner-habit-tracker-section button,
 .planner-custom-sections-control button {
-    background-color: #28a745; /* Green */
+    background-color: var(--btn-green-bg);
     color: white;
     border: none;
     padding: 8px 12px;
@@ -216,7 +378,7 @@
 
 .planner-habit-tracker-section button:hover,
 .planner-custom-sections-control button:hover {
-    background-color: #218838;
+    background-color: var(--btn-green-hover-bg);
 }
 
 #habitList {
@@ -229,20 +391,20 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: #f8f9fa;
+    background-color: var(--habit-item-bg);
     padding: 8px 12px;
     border-radius: 6px;
-    border: 1px solid #e9ecef;
+    border: 1px solid var(--habit-item-border);
     font-size: 0.9rem;
 }
 
 .planner-habit-item strong {
     font-weight: 500;
-    color: #343a40;
+    color: var(--habit-item-strong-color);
 }
 
 .planner-habit-item button {
-    background-color: #dc3545; /* Red */
+    background-color: var(--btn-red-bg);
     color: white;
     border: none;
     padding: 5px 8px;
@@ -253,7 +415,7 @@
 }
 
 .planner-habit-item button:hover {
-    background-color: #c82333;
+    background-color: var(--btn-red-hover-bg);
 }
 
 #customSectionsContainer {
@@ -263,8 +425,8 @@
 }
 
 .planner-custom-section-item {
-    background-color: #f8f9fa;
-    border: 1px solid #e9ecef;
+    background-color: var(--custom-section-item-bg);
+    border: 1px solid var(--custom-section-item-border);
     padding: 12px;
     border-radius: 8px;
     box-shadow: none; /* Removed box shadow */
@@ -272,11 +434,11 @@
 
 .planner-custom-section-item h4 {
     margin-top: 0;
-    color: #007bff;
+    color: var(--custom-section-item-h4-color);
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid #cfe2ff;
+    border-bottom: 1px solid var(--custom-section-item-h4-border-bottom);
     padding-bottom: 8px;
     margin-bottom: 10px;
     font-size: 1rem;
@@ -284,7 +446,7 @@
 }
 
 .planner-custom-section-item h4 button {
-    background-color: #dc3545;
+    background-color: var(--btn-red-bg);
     color: white;
     border: none;
     padding: 4px 8px;
@@ -295,13 +457,13 @@
 
 .planner-custom-section-item p {
     font-size: 0.9rem;
-    color: #555;
+    color: var(--custom-section-item-p-color);
     white-space: pre-wrap;
     word-break: break-word;
 }
 
 .planner-add-slot-btn {
-    background-color: #17a2b8; /* Info blue */
+    background-color: var(--add-slot-btn-bg);
     color: white;
     border: none;
     padding: 6px 10px;
@@ -313,7 +475,7 @@
 }
 
 .planner-add-slot-btn:hover {
-    background-color: #138496;
+    background-color: var(--add-slot-btn-hover-bg);
 }
 
 .planner-time-slot-input-group {
@@ -327,14 +489,16 @@
 .planner-time-slot-input-group input {
     flex-grow: 1;
     padding: 6px 8px;
-    border: 1px solid #ced4da;
+    border: 1px solid var(--time-slot-input-border);
     border-radius: 4px;
     font-size: 0.8rem;
     box-sizing: border-box;
+    background-color: var(--time-slot-input-bg);
+    color: var(--time-slot-input-color);
 }
 
 .planner-time-slot-input-group button {
-    background-color: #6c757d; /* Secondary gray */
+    background-color: var(--time-slot-btn-bg);
     color: white;
     border: none;
     padding: 5px 8px;
@@ -345,5 +509,5 @@
 }
 
 .planner-time-slot-input-group button:hover {
-    background-color: #5a6268;
+    background-color: var(--time-slot-btn-hover-bg);
 }
