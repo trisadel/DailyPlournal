@@ -10,12 +10,14 @@ html, body {
 }
 
 .container {
-     width: 100%;
-  height: 100vh;
-  background: transparent;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+    width: 100%;
+    height: 100vh; /* Use 100vh to ensure it fills the viewport */
+    background-image: linear-gradient(rgba(30, 30, 66, 0.8), rgba(0, 0, 50, 0.8)), url('img/download.jpg');
+    background-position: center;
+    background-size: cover;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .form-box {
@@ -102,7 +104,7 @@ input{
 }
 
 body {
-    background-image: url('img/journalbg.jpeg');
+    background-image: url('img/download.jpg');
     background-size: cover;
     background-repeat: no-repeat;
     background-position: bottom;
@@ -285,33 +287,3 @@ body {
   margin: 0;
   height: 100vh; /* Make sure the body takes the full viewport height */
 }
-/* dark mode */
-.dark-mode {
-  background-color: #121212;
-  color: #e0e0e0;
-}
-
-.dark-mode a {
-  color: #90caf9;
-}
-
-body.dark-mode  {
-  background-image: url('static/img/darkjournalbg.jpeg') !important;
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-position: center;
-}
-
-.dark-mode .sidebar,
-.dark-mode .profile,
-.dark-mode .journal-entry,
-.dark-mode .header {
-  background-color: #1e1e1e;
-  color: #e0e0e0;
-}
-.dark-mode .container {
-  background: transparent;
-  background-size: cover;
-  background-position: center;
-}
-

@@ -19,12 +19,15 @@ with app.app_context():
 
 @app.route('/')
 def home():
-    # Pass current_streak even for the homepage if a user is logged in
     current_streak = 0
     user = None
     if 'user_id' in session:
         user = User.query.get(session['user_id'])
-        current_streak = user.streak.current_streak if user.streak else 0
+        # More robust check: ensure user exists AND user.streak exists before accessing current_streak
+        if user and user.streak:
+            current_streak = user.streak.current_streak
+        else:
+            current_streak = 0
     return render_template('homepage.html', user=user, current_streak=current_streak)
 
 @app.route('/signup/', methods=['GET', 'POST'])
@@ -139,64 +142,53 @@ def new_journal_entry():
         return redirect(url_for('login'))
 
     user = User.query.get(session['user_id'])
-
     if request.method == 'POST':
         title = request.form['title']
         content = request.form['content']
         entry_type = request.form['type']
         mood = request.form.get('mood')
-
-        # Parse the date string from the form
+        
+        # Get date from form and convert to datetime object
         date_posted_str = request.form['date_posted']
-        date_posted = datetime.strptime(date_posted_str, '%Y-%m-%d')
+        date_posted = datetime.strptime(date_posted_str, '%Y-%m-%d') # Convert string to datetime object
 
         new_entry = JournalEntry(
             title=title,
             content=content,
             type=entry_type,
             mood=mood,
-            date_posted=date_posted,
+            date_posted=date_posted, # Use the date from the form
             user_id=session['user_id']
         )
         db.session.add(new_entry)
+        db.session.commit()
 
-        # Update streak based on the entry date
-        entry_date_for_streak = date_posted.date()
+       # Update streak based on the journal entry's date_posted
+        entry_date_for_streak = date_posted.date() # Use the date from the form for streak calculation
         streak = Streak.query.filter_by(user_id=session['user_id']).first()
 
         if not streak:
-            streak = Streak(
-                user_id=session['user_id'],
-                current_streak=1,
-                last_login_date=entry_date_for_streak
-            )
+            # If no streak exists, start a new one with the entry's date
+            streak = Streak(user_id=session['user_id'], current_streak=1, last_login_date=entry_date_for_streak)
             db.session.add(streak)
         else:
+            # Compare with the entry's date for streak logic
             if streak.last_login_date == entry_date_for_streak - timedelta(days=1):
+                # If the entry date is the day after the last streak date, increment
                 streak.current_streak += 1
-                streak.last_login_date = entry_date_for_streak
             elif streak.last_login_date != entry_date_for_streak:
+                # If the entry date is not consecutive and not the same day, reset streak
                 streak.current_streak = 1
                 streak.last_login_date = entry_date_for_streak
-
         db.session.commit()
 
         flash('Journal entry created successfully!', 'success')
         return redirect(url_for('dashboard'))
-
-    # For GET requests, prepare variables for the template
+    
+    # Pass today's date to the template for default value
     today_date = date.today().strftime('%Y-%m-%d')
     current_streak = user.streak.current_streak if user.streak else 0
-    initial_stickers = []  # Or fetch real sticker data if needed
-
-    return render_template(
-        'new_journal.html',
-        user=user,
-        today_date=today_date,
-        current_streak=current_streak,
-        initial_stickers=initial_stickers
-    )
-
+    return render_template('new_journal.html', user=user, today_date=today_date, current_streak=current_streak)
 
 @app.route('/journal/view/<int:entry_id>')
 def view_journal_entry(entry_id):
@@ -572,25 +564,3 @@ if __name__ == '__main__':
     with app.app_context():
         db.create_all()  # Create tables within the app context
     app.run(debug=True)
-
-
-@app.route('/sketchbook')
-def sketchbook():
-    # Only include these if you're using them in base.html
-    if 'user_id' not in session:
-        return redirect(url_for('login'))
-
-    user = User.query.get(session['user_id'])
-
-    # If you show journal entries or streaks in the sidebar
-    journal_entries = JournalEntry.query.filter_by(user_id=user.id).order_by(JournalEntry.date_posted.desc()).all()
-
-    return render_template(
-        'sketchbook.html',
-        user=user,
-        journal_entries=journal_entries,
-        
-    )
-
-
-
