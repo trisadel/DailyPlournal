@@ -1,0 +1,73 @@
+/* sketchbook.css */
+
+.sketchbook-container {
+    max-width: 850px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    transition: background-color 0.3s ease;
+}
+
+body[data-theme="dark"] .sketchbook-container {
+    background-color: rgba(30, 30, 30, 0.9);
+}
+
+.sketchbook-container h2 {
+    font-family: 'Patrick Hand', cursive;
+    font-size: 2rem;
+    text-align: center;
+    margin-bottom: 20px;
+    color: var(--text-color);
+}
+
+canvas {
+    border: 2px solid #333;
+    border-radius: 8px;
+    background-color: #fff;
+    display: block;
+    margin: 0 auto 20px;
+    cursor: crosshair;
+    transition: background-color 0.3s ease;
+}
+
+body[data-theme="dark"] canvas {
+    background-color: #1e1e1e;
+}
+
+.tools {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+.tools label {
+    font-family: 'Patrick Hand', cursive;
+    font-size: 1.1rem;
+    color: var(--text-color);
+}
+
+.tools input[type="color"],
+.tools input[type="range"] {
+    margin-left: 5px;
+}
+
+.tools button {
+    padding: 8px 15px;
+    font-family: 'Patrick Hand', cursive;
+    font-size: 1rem;
+    background-color: #6366f1;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.tools button:hover {
+    background-color: #4f46e5;
+}
