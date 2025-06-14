@@ -27,6 +27,7 @@
     --journal-entry-p-color: #555;
     --journal-entry-small-color: #888;
     --journal-entry-small-border-top: #e9ecef;
+    --entry-content-display-color: #4a5568;
 
     /* Streak Info Styling */
     --streak-info-bg: #28a745;
@@ -66,6 +67,7 @@ body[data-theme="dark"] {
     --journal-entry-p-color: #cccccc;
     --journal-entry-small-color: #aaaaaa;
     --journal-entry-small-border-top: #444444;
+    --entry-content-display-color: #f0f0f0ee;
 
     /* Streak Info Styling */
     --streak-info-bg: #1e8449; /* Darker green for dark mode */
@@ -193,6 +195,10 @@ p {
     margin-top: 15px;
     padding-top: 10px;
     border-top: 1px dashed var(--journal-entry-small-border-top);
+}
+
+.entry-content-display {
+    color: var(--entry-content-display-color);
 }
 
 /* Streak Info Styling */

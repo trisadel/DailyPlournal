@@ -10,6 +10,7 @@
     --journal-editor-bg: #fff;
     --journal-editor-border: #ddd;
     --journal-editor-box-shadow: rgba(0, 0, 0, 0.05);
+    --entry-content-display-color: #4a5568;
 
     --typography-controls-bg: #eff2f7;
     --control-box-label-color: #1d1b1b;
@@ -53,6 +54,7 @@ body[data-theme="dark"] {
     --journal-editor-bg:#444;
     --journal-editor-border: #2a2a2a;
     --journal-editor-box-shadow: rgba(0, 0, 0, 0.2);
+    --entry-content-display-color: #fffcfcee;
 
     --typography-controls-bg: #3a3a3a;
     --control-box-label-color: #e0e0e0;
@@ -95,6 +97,10 @@ h1 {
 
 p {
     color: var(--p-color);
+}
+
+.entry-content-display {
+    color: var(--entry-content-display-color);
 }
 
 .content {
@@ -239,17 +245,24 @@ textarea {
 }
 /* For displaying sketchpad in view_journal.html */
     .sketch-display-area {
-        margin-top: 20px;
-        padding: 10px;
-        border: 1px dashed var(--sketch-display-area-border);
-        background-color: var(--sketch-display-area-bg);
-        text-align: center; /* Center the image */
+        margin-top: 10px; /* Adjusted margin */
+        padding: 5px; /* Adjusted padding */
+        border: 1px dashed #ccc;
+        background-color: #f9f9f9;
+        text-align: center;
+        max-width: 100%; /* Ensure it fits within the container */
+        overflow: hidden; /* Hide overflow if image is too large */
     }
     .sketch-display-area img {
-        display: block; /* Ensure image takes full width of its container if needed */
-        margin: 0 auto; /* Center the image horizontally */
+        max-width: 100%;
+        height: auto;
+        display: block;
+        margin: 0 auto;
     }
-
+    .no-content-message {
+        color: #888;
+        font-style: italic;
+    }
     .mode-selection {
         margin-bottom: 20px;
         text-align: center;
