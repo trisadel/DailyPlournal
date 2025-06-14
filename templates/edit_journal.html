@@ -9,65 +9,85 @@
         <form method="POST" action="{{ url_for('edit_journal_entry', entry_id=entry.id) }}">
             <div class="typography-controls">
                 <div class="control-box">
-                <label for="fontSelect">Font:</label>
-                <select id="fontSelect">
-                    <option value="Arial, sans-serif">Arial</option>
-                    <option value="'Courier New', monospace">Courier New</option>
-                    <option value="Georgia, serif">Georgia</option>
-                    <option value="'Times New Roman', serif">Times New Roman</option>
-                    <option value="Verdana, sans-serif">Verdana</option>
-                </select>
+                    <label for="fontSelect">Font:</label>
+                    <select id="fontSelect">
+                        <option value="Arial, sans-serif">Arial</option>
+                        <option value="'Courier New', monospace">Courier New</option>
+                        <option value="Georgia, serif">Georgia</option>
+                        <option value="'Times New Roman', serif">Times New Roman</option>
+                        <option value="Verdana, sans-serif">Verdana</option>
+                    </select>
+                </div>
+
+                <div class="control-box">
+                    <label for="entryType">Entry Type:</label>
+                    <select id="entryType" name="type">
+                        <option value="daily">Daily Reflection</option>
+                        <option value="gratitude">Gratitude</option>
+                        <option value="goals">Goals</option>
+                        <option value="dream">Dream Journal</option>
+                        <option value="freewrite">Free Write</option>
+                    </select>
+                </div>
+
+                <div class="control-box">
+                    <label for="moodSelect">Mood:</label>
+                    <select id="moodSelect" name="mood">
+                        <option value="">No Mood</option>
+                        <option value="happy">Happy</option>
+                        <option value="sad">Sad</option>
+                        <option value="angry">Angry</option>
+                        <option value="calm">Calm</option>
+                        <option value="excited">Excited</option>
+                        <option value="stressed">Stressed</option>
+                    </select>
+                </div>
+
+                <div class="control-box">
+                    <label for="fontSize">Font Size:</label>
+                    <input type="number" id="fontSize" value="16" min="8" max="72">
+                </div>
+
+                <div class="control-box">
+                    <label for="lineHeight">Line Height:</label>
+                    <input type="number" id="lineHeight" value="24" min="12" max="100">
+                </div>
             </div>
 
             <div class="control-box">
-                <label for="entryType">Entry Type:</label>
-                <select id="entryType" name="type"> 
-                    <option value="daily">Daily Reflection</option>
-                    <option value="gratitude">Gratitude</option>
-                    <option value="goals">Goals</option>
-                    <option value="dream">Dream Journal</option>
-                    <option value="freewrite">Free Write</option>
-                </select>
-            </div>
-
-            <div class="control-box">
-                <label for="moodSelect">Mood:</label>
-                <select id="moodSelect" name="mood">
-                    <option value="">No Mood</option>
-                    <option value="happy">Happy</option>
-                    <option value="sad">Sad</option>
-                    <option value="angry">Angry</option>
-                    <option value="calm">Calm</option>
-                    <option value="excited">Excited</option>
-                    <option value="stressed">Stressed</option>
-                </select>
-            </div>
-
-            <div class="control-box">
-                <label for="fontSize">Font Size:</label>
-                <input type="number" id="fontSize" value="16" min="8" max="72">
-            </div>
-
-            <div class="control-box">
-                <label for="lineHeight">Line Height:</label>
-                <input type="number" id="lineHeight" value="24" min="12" max="100">
-            </div>
-
-        </div>
-
-        <div class="control-box">
                 <label for="datePosted">Entry Date:</label>
-                <input type="date" id="datePosted" name="date_posted"  required>
-        </div>
+                <input type="date" id="datePosted" name="date_posted" required value="{{ entry.date_posted.strftime('%Y-%m-%d') }}">
+            </div>
 
-        <div class="char-count" id="charCount">0 characters</div>
+            <div class="char-count" id="charCount">0 characters</div>
 
             <input type="text" name="title" placeholder="Entry Title" value="{{ entry.title }}" required>
-            <textarea id="journalText" name="content" placeholder="Start writing..." rows="10">{{ entry.content }}</textarea>
-            {# Hidden input for sketch_data - will be populated by JS #}
-            <input type="hidden" id="sketchDataInput" name="sketch_data" value="{{ entry.sketch_data or '' }}">
 
-            
+            <div class="mode-selection">
+                <button type="button" id="writeModeBtn" class="active">Write</button>
+                <button type="button" id="sketchModeBtn">Sketch</button>
+            </div>
+
+            <textarea id="journalText" name="content" placeholder="Start writing..." rows="10">{{ entry.content }}</textarea>
+
+            <div class="sketchpad-section" style="display: none;">
+                <h3>Sketchpad</h3>
+                <div class="sketchpad-controls-top">
+                    <label for="penColor">Pen Color:</label>
+                    <input type="color" id="penColor" value="#000000">
+                    <label for="penSize">Pen Size:</label>
+                    <input type="range" id="penSize" min="1" max="20" value="5">
+                    <span id="penSizeValue">5</span>
+                    <button type="button" id="eraserBtn">Eraser</button>
+                </div>
+                <canvas id="sketchpad" width="600" height="300" style="border:1px solid #ccc; background:white;"></canvas>
+                <div class="sketchpad-controls-bottom">
+                    <button type="button" id="clearSketch">Clear Sketch</button>
+                    <button type="button" id="undoBtn">Undo</button>
+                    <button type="button" id="redoBtn">Redo</button>
+                </div>
+                <input type="hidden" id="sketchDataInput" name="sketch_data" value="{{ entry.sketch_data or '' }}">
+            </div>
 
             <div class="btn-field">
                 <button type="submit">Update Entry</button>
@@ -82,17 +102,72 @@
     const fontSizeInput = document.getElementById('fontSize');
     const lineHeightInput = document.getElementById('lineHeight');
     const charCount = document.getElementById('charCount');
-    const datePostedInput = document.getElementById('datePosted'); // Get date input
+    const datePostedInput = document.getElementById('datePosted');
+    const moodSelect = document.getElementById('moodSelect');
 
-    // Set default date to today's date if not already set by Flask
-        if (!datePostedInput.value) {
-            const today = new Date();
-            const yyyy = today.getFullYear();
-            const mm = String(today.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
-            const dd = String(today.getDate()).padStart(2, '0');
-            datePostedInput.value = `${yyyy}-${mm}-${dd}`;
+    // Mode selection elements
+    const writeModeBtn = document.getElementById('writeModeBtn');
+    const sketchModeBtn = document.getElementById('sketchModeBtn');
+    const sketchpadSection = document.querySelector('.sketchpad-section');
+
+    // Sketchpad elements
+    const sketchpad = document.getElementById('sketchpad');
+    const ctx = sketchpad.getContext('2d');
+    let isDrawing = false;
+    let isErasing = false;
+    const penColor = document.getElementById('penColor');
+    const penSize = document.getElementById('penSize');
+    const penSizeValue = document.getElementById('penSizeValue');
+    const clearSketch = document.getElementById('clearSketch');
+    const sketchDataInput = document.getElementById('sketchDataInput');
+    const eraserBtn = document.getElementById('eraserBtn');
+    const undoBtn = document.getElementById('undoBtn');
+    const redoBtn = document.getElementById('redoBtn');
+
+    let drawingHistory = [];
+    let historyPointer = -1;
+    let defaultPenColor = '#000000';
+
+    // Function to save the current canvas state
+    function saveState() {
+        if (historyPointer < drawingHistory.length - 1) {
+            drawingHistory = drawingHistory.slice(0, historyPointer + 1);
         }
-    
+        drawingHistory.push(sketchpad.toDataURL());
+        historyPointer++;
+        updateUndoRedoButtons();
+    }
+
+    // Function to restore a canvas state
+    function restoreState() {
+        const img = new Image();
+        img.onload = function() {
+            ctx.clearRect(0, 0, sketchpad.width, sketchpad.height);
+            ctx.drawImage(img, 0, 0);
+        };
+        img.src = drawingHistory[historyPointer];
+        updateUndoRedoButtons();
+    }
+
+    // Function to update undo/redo button states
+    function updateUndoRedoButtons() {
+        undoBtn.disabled = historyPointer <= 0;
+        redoBtn.disabled = historyPointer >= drawingHistory.length - 1;
+    }
+
+
+    // Set default date if not already set (though for edit, it should be set by Flask)
+    if (!datePostedInput.value) {
+        const today = new Date();
+        const yyyy = today.getFullYear();
+        const mm = String(today.getMonth() + 1).padStart(2, '0');
+        const dd = String(today.getDate()).padStart(2, '0');
+        datePostedInput.value = `${yyyy}-${mm}-${dd}`;
+    }
+
+    // Set mood from entry data
+    moodSelect.value = "{{ entry.mood | default('') }}";
+
 
     // Typography
     fontSelect.addEventListener('change', () => {
@@ -111,7 +186,189 @@
     textarea.addEventListener('input', () => {
         charCount.textContent = textarea.value.length + ' characters';
     });
+
+    // --- Mode Switching Logic ---
+    let initialModeIsSketch = false;
+    const initialContent = textarea.value;
+    const sketchPlaceholderRegex = /\[SKETCH_DATA:({.*?})\]/;
+    if (initialContent.match(sketchPlaceholderRegex)) {
+        initialModeIsSketch = true;
+        // Extract existing sketch data if it exists
+        const match = initialContent.match(sketchPlaceholderRegex);
+        if (match && match[1]) {
+            try {
+                const existingSketchData = JSON.parse(match[1]).url;
+                if (existingSketchData) {
+                    sketchDataInput.value = existingSketchData;
+                }
+                // Also remove the sketch placeholder from the textarea for editing
+                textarea.value = textarea.value.replace(sketchPlaceholderRegex, '').trim();
+            } catch (e) {
+                console.error("Error parsing existing sketch data for edit:", e);
+            }
+        }
+    }
+
+    if (initialModeIsSketch) {
+        sketchModeBtn.click();
+    } else {
+        writeModeBtn.click();
+    }
+
+    writeModeBtn.addEventListener('click', () => {
+        writeModeBtn.classList.add('active');
+        sketchModeBtn.classList.remove('active');
+        textarea.style.display = 'block';
+        sketchpadSection.style.display = 'none';
+        // Clear sketch data from hidden input if switching to write mode
+        sketchDataInput.value = '';
+    });
+
+    sketchModeBtn.addEventListener('click', () => {
+        sketchModeBtn.classList.add('active');
+        writeModeBtn.classList.remove('active');
+        textarea.style.display = 'none';
+        sketchpadSection.style.display = 'block';
+        // Ensure canvas drawing context is set up
+        if (sketchpad.width === 0 || ctx.canvas.width === 0) {
+            sketchpad.width = 600;
+            sketchpad.height = 300;
+            ctx.lineCap = 'round';
+            // Set initial color and size based on current tool
+            ctx.strokeStyle = isErasing ? '#FFFFFF' : penColor.value;
+            ctx.lineWidth = isErasing ? penSize.value * 2 : penSize.value;
+        }
+        // Load existing sketch if available
+        if (sketchDataInput.value) {
+            const img = new Image();
+            img.onload = function() {
+                ctx.clearRect(0, 0, sketchpad.width, sketchpad.height);
+                ctx.drawImage(img, 0, 0);
+                saveState();
+            };
+            img.src = sketchDataInput.value;
+        } else {
+            ctx.clearRect(0, 0, sketchpad.width, sketchpad.height);
+            saveState();
+        }
+    });
+
+
+    // --- Sketchpad Drawing Logic ---
+    ctx.strokeStyle = penColor.value;
+    ctx.lineWidth = penSize.value;
+    ctx.lineCap = 'round';
+
+    sketchpad.addEventListener('mousedown', (e) => {
+        isDrawing = true;
+        const rect = sketchpad.getBoundingClientRect();
+        ctx.beginPath();
+        ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
+    });
+
+    sketchpad.addEventListener('mousemove', (e) => {
+        if (!isDrawing) return;
+        const rect = sketchpad.getBoundingClientRect();
+        ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
+
+        // Apply pen or eraser properties
+        if (isErasing) {
+            ctx.strokeStyle = '#FFFFFF';
+            ctx.lineWidth = penSize.value * 2;
+        } else {
+            ctx.strokeStyle = penColor.value;
+            ctx.lineWidth = penSize.value;
+        }
+        ctx.stroke();
+    });
+
+    sketchpad.addEventListener('mouseup', () => {
+        isDrawing = false;
+        saveState();
+    });
+
+    sketchpad.addEventListener('mouseleave', () => {
+        isDrawing = false;
+    });
+
+    penColor.addEventListener('change', () => {
+        if (!isErasing) {
+            ctx.strokeStyle = penColor.value;
+        }
+        defaultPenColor = penColor.value;
+    });
+
+    penSize.addEventListener('input', () => {
+        ctx.lineWidth = isErasing ? penSize.value * 2 : penSize.value;
+        penSizeValue.textContent = penSize.value;
+    });
+
+    // Eraser button functionality
+    eraserBtn.addEventListener('click', () => {
+        isErasing = !isErasing;
+        if (isErasing) {
+            eraserBtn.classList.add('active-tool');
+            penColor.disabled = true;
+            ctx.strokeStyle = '#FFFFFF';
+            ctx.lineWidth = penSize.value * 2;
+        } else {
+            eraserBtn.classList.remove('active-tool');
+            penColor.disabled = false;
+            ctx.strokeStyle = penColor.value;
+            ctx.lineWidth = penSize.value;
+        }
+    });
+
+
+    clearSketch.addEventListener('click', () => {
+        ctx.clearRect(0, 0, sketchpad.width, sketchpad.height);
+        sketchDataInput.value = '';
+        saveState();
+    });
+
+    // Undo/Redo button functionality
+    undoBtn.addEventListener('click', () => {
+        if (historyPointer > 0) {
+            historyPointer--;
+            restoreState();
+        }
+    });
+
+    redoBtn.addEventListener('click', () => {
+        if (historyPointer < drawingHistory.length - 1) {
+            historyPointer++;
+            restoreState();
+        }
+    });
+
+    // Initialize button states
+    updateUndoRedoButtons();
+
+
+    // Function to check if the canvas is blank
+    function isCanvasBlank(canvas) {
+        const blank = document.createElement('canvas');
+        blank.width = canvas.width;
+        blank.height = canvas.height;
+        return canvas.toDataURL() === blank.toDataURL();
+    }
+
+    document.querySelector('form').addEventListener('submit', (event) => {
+        if (sketchpadSection.style.display === 'block') {
+            if (!isCanvasBlank(sketchpad)) {
+                const sketchData = { url: sketchpad.toDataURL() };
+                textarea.value = `[SKETCH_DATA:${JSON.stringify(sketchData)}]` + (textarea.value ? `\\n${textarea.value}` : '');
+            } else {
+                sketchDataInput.value = '';
+                if (textarea.value.trim() === '') {
+                    textarea.value = '';
+                } else {
+                    const currentTextareaValue = textarea.value;
+                    const cleanedValue = currentTextareaValue.replace(sketchPlaceholderRegex, '').trim();
+                    textarea.value = cleanedValue;
+                }
+            }
+        }
+    });
 </script>
-
-
 {% endblock %}

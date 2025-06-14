@@ -51,14 +51,15 @@
         </div>
     </div>
 
-
     <div class="mb-6">
         <h3 class="recent-entries-header">Recent Journal Entries</h3>
         <ul class="recent-entries-list">
             {% for entry in journal_entries %}
             <li class="recent-entry-box">
                 <p class="entry-date">{{ entry.date_posted.strftime('%B %d:') }} <span class="entry-title">"{{ entry.title }}"</span></p>
-                <p class="entry-excerpt">{{ entry.content[:80] }}...</p>
+                <div class="entry-excerpt" id="entry-excerpt-{{ entry.id }}">
+                    <p style="display:none;">{{ entry.content }}</p> {# Hidden paragraph to hold raw content #}
+                </div>
             </li>
             {% else %}
             <li><p class="text-gray-500">No recent entries.</p></li>
@@ -75,4 +76,80 @@
         </a>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.entry-excerpt').forEach(excerptDiv => {
+            const rawContentPara = excerptDiv.querySelector('p');
+            if (!rawContentPara) return;
+
+            let rawContent = rawContentPara.textContent;
+            const sketchDataRegex = /\[SKETCH_DATA:({.*?})\]/g;
+            let processedContent = rawContent;
+            let sketchFound = false;
+
+            // Look for and replace sketch data
+            processedContent = processedContent.replace(sketchDataRegex, (match, jsonString) => {
+                sketchFound = true;
+                try {
+                    const sketchData = JSON.parse(jsonString);
+                    const dataURL = sketchData.url;
+                    // For excerpts, we might want a smaller image or just an icon.
+                    // For now, display a small image placeholder.
+                    return `<div class="sketch-display-area" style="max-width: 100px; max-height: 100px;"><img src="${dataURL}" alt="Sketch" style="max-width:100%; height:auto;"></div>`;
+                } catch (e) {
+                    console.error("Error parsing sketch JSON data for excerpt:", e);
+                    return ''; // Return empty string if parsing fails
+                }
+            });
+
+            // Convert remaining newlines to <br> tags for plain text
+            processedContent = processedContent.replace(/\\n/g, '<br>');
+
+            // Truncate text content after processing sketch and newlines
+            const plainTextContent = processedContent.replace(/<[^>]*>/g, ''); // Remove HTML tags for truncation
+            const truncatedText = plainTextContent.length > 80 ? plainTextContent.substring(0, 80) + '...' : plainTextContent;
+
+            // Combine sketch (if found) and truncated text
+            if (sketchFound) {
+                excerptDiv.innerHTML = processedContent + (truncatedText ? `<p>${truncatedText}</p>` : '');
+            } else {
+                excerptDiv.innerHTML = `<p>${truncatedText || '<span class="no-content-message">No content.</span>'}</p>`;
+            }
+
+            // Remove the hidden raw content paragraph
+            rawContentPara.remove();
+        });
+
+        // For profile pic upload
+        document.getElementById('profile_pic').addEventListener('change', function() {
+            this.form.submit();
+        });
+    });
+</script>
+<style>
+    /* Add styles for sketch display in profile as needed, similar to dashboard/view */
+    .sketch-display-area {
+        margin-top: 5px;
+        padding: 2px;
+        border: 1px dashed #eee;
+        background-color: #fcfcfc;
+        text-align: center;
+        max-width: 100px; /* Smaller for profile excerpt */
+        max-height: 100px;
+        overflow: hidden;
+        display: inline-block; /* To allow text to flow beside it if desired */
+        vertical-align: middle;
+    }
+    .sketch-display-area img {
+        max-width: 100%;
+        height: auto;
+        display: block;
+        margin: 0 auto;
+    }
+    .no-content-message {
+        color: #888;
+        font-style: italic;
+    }
+</style>
 {% endblock %}

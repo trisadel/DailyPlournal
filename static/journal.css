@@ -3,6 +3,10 @@
     padding: 20px;
     margin-left: 200px;
     transition: margin-left 0.3s ease;
+    background:
+        url('img/journalbg.jpeg') no-repeat center center fixed,
+        linear-gradient(rgba(0, 0, 0, 0.814), rgba(0, 0, 0, 0.5));
+    background-size: cover;
 }
 
 .content.collapsed {
@@ -49,7 +53,6 @@
     font-size: 0.95em; /* Slightly smaller font */
 }
 
-
 .control-box textarea {
     width: 100%;
     min-height: 300px;
@@ -90,10 +93,78 @@ textarea {
     display: inline-block;
 }
 
+.btn-field button,
+.btn-field .dltbutton {
+    padding: 10px 20px;
+    border: none;
+    background-color: #ff0000;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    text-decoration: none;
+    margin: 0 10px;
+    display: inline-block;
+}
+
 .btn-field button:hover,
 .btn-field .button:hover {
     background-color: #0056b3;
 }
 
+/* Styles for sketchpad */
+.sketchpad-section {
+    margin-top: 30px;
+    border: 1px solid #ddd;
+    padding: 15px;
+    border-radius: 8px;
+    background-color: #fcfcfc;
+}
+.sketchpad-controls-top, .sketchpad-controls-bottom {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 15px;
+    align-items: center;
+}
+.sketchpad-controls-bottom {
+    margin-top: 15px;
+}
+#sketchpad {
+    display: block; /* Ensures canvas takes full width and new line */
+    margin: 0 auto; /* Center the canvas */
+    background-color: #fff; /* Ensure white background for drawing */
+}
+/* For displaying sketchpad in view_journal.html */
+    .sketch-display-area {
+        margin-top: 20px;
+        padding: 10px;
+        border: 1px dashed #ccc;
+        background-color: #f9f9f9;
+        text-align: center; /* Center the image */
+    }
+    .sketch-display-area img {
+        display: block; /* Ensure image takes full width of its container if needed */
+        margin: 0 auto; /* Center the image horizontally */
+    }
 
-
+    .mode-selection {
+        margin-bottom: 20px;
+        text-align: center;
+    }
+    .mode-selection button {
+        padding: 10px 20px;
+        margin: 0 5px;
+        border: 1px solid #007bff;
+        background-color: #f0f8ff;
+        color: #007bff;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 1em;
+        transition: background-color 0.3s, color 0.3s;
+    }
+    .mode-selection button.active {
+        background-color: #007bff;
+        color: white;
+    }
+    .mode-selection button:hover:not(.active) {
+        background-color: #e0f0ff;
+    }
