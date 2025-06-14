@@ -573,9 +573,25 @@ if __name__ == '__main__':
         db.create_all()  # Create tables within the app context
     app.run(debug=True)
 
+
 @app.route('/sketchbook')
 def sketchbook():
-    return render_template('sketchbook.html')
+    # Only include these if you're using them in base.html
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+
+    user = User.query.get(session['user_id'])
+
+    # If you show journal entries or streaks in the sidebar
+    journal_entries = JournalEntry.query.filter_by(user_id=user.id).order_by(JournalEntry.date_posted.desc()).all()
+    streak_count = calculate_streak(user.id)  # You might already have this function
+
+    return render_template(
+        'sketchbook.html',
+        user=user,
+        journal_entries=journal_entries,
+        current_streak=streak_count
+    )
 
 
 
