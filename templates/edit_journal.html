@@ -58,10 +58,10 @@
                 <label for="datePosted">Entry Date:</label>
                 <input type="date" id="datePosted" name="date_posted" required value="{{ entry.date_posted.strftime('%Y-%m-%d') }}">
             </div>
-
-            <div class="char-count" id="charCount">0 characters</div>
-
-            <input type="text" name="title" placeholder="Entry Title" value="{{ entry.title }}" required>
+            <div class="control-box">
+            <label class="char-count" id="charCount">0 characters</label>
+            </div>
+            <input type="text" name="title" placeholder="Entry Title" required>
 
             <div class="mode-selection">
                 <button type="button" id="writeModeBtn" class="active">Write</button>

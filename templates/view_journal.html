@@ -15,9 +15,12 @@
             <p><strong>Mood:</strong> {{ entry.mood }}</p>
         {% endif %}
         <p><strong>Content:</strong></p>
-        {# Use a hidden preformatted tag to preserve newlines and get the raw string #}
-        <pre id="rawJournalContent" style="display:none;">{{ entry.content }}</pre>
-        <div id="journalContentDisplay"></div>
+
+    <div class="journal-entry">
+        <div class="entry-content-display" id="entry-content-{{ entry.id }}">
+            <p style="display:none;">{{ entry.content }}</p> {# Hidden paragraph to hold raw content #}
+        </div>
+    </div>
 
         <div class="btn-field">
             <a href="{{ url_for('edit_journal_entry', entry_id=entry.id) }}" class="button">Edit</a>
@@ -29,30 +32,47 @@
 </div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const contentDisplayDiv = document.getElementById('journalContentDisplay');
-        const rawContentPre = document.getElementById('rawJournalContent');
-        let processedContent = rawContentPre.textContent; // Use textContent to get raw string
+    document.querySelectorAll('.entry-content-display').forEach(contentDiv => {
+            const rawContentPara = contentDiv.querySelector('p');
+            if (!rawContentPara) return;
 
-        // Extract and process sketch data
-        processedContent = processedContent.replace(/\[SKETCH_DATA:({.*?})\]/g, (match, jsonString) => {
-            try {
-                const sketchData = JSON.parse(jsonString);
-                const dataURL = sketchData.url;
+            let rawContent = rawContentPara.textContent;
+            const sketchDataRegex = /\[SKETCH_DATA:({.*?})\]/g;
+            let processedContent = rawContent;
+            let sketchFound = false;
 
-                // Display sketch inside a wrapper or directly as an image
-                return `<div class="sketch-display-area"><img src="${dataURL}" alt="Sketch" style="max-width:100%; height:auto; display:block;"></div><br>`;
-            } catch (e) {
-                console.error("Error parsing sketch JSON data:", e);
-                return ''; // Return empty string if parsing fails
+            // Look for and replace sketch data
+            processedContent = processedContent.replace(sketchDataRegex, (match, jsonString) => {
+                sketchFound = true;
+                try {
+                    const sketchData = JSON.parse(jsonString);
+                    const dataURL = sketchData.url;
+                    return `<div class="sketch-display-area"><img src="${dataURL}" alt="Sketch" style="max-width:100%; height:auto; display:block;"></div><br>`;
+                } catch (e) {
+                    console.error("Error parsing sketch JSON data:", e);
+                    return ''; // Return empty string if parsing fails
+                }
+            });
+
+            // Convert remaining newlines to <br> tags for plain text
+            // Note: The `\\n` indicates that the newline characters were escaped in Python
+            processedContent = processedContent.replace(/\\n/g, '<br>');
+
+            // If a sketch was found, but there's no other content, remove extra <br>
+            if (sketchFound && processedContent.trim().startsWith('<div class="sketch-display-area"')) {
+                // If the entire content was just a sketch, ensure no leading <br> tags
+                processedContent = processedContent.replace(/^(<br>)+/, '');
+            }
+
+            // If the content is empty after processing, or only contained sketch data
+            if (processedContent.trim() === '' && !sketchFound) {
+                 contentDiv.innerHTML = '<p class="no-content-message">No written content for this entry.</p>';
+            } else if (processedContent.trim() === '<br>' && !sketchFound){
+                 contentDiv.innerHTML = '<p class="no-content-message">No written content for this entry.</p>';
+            }
+            else {
+                contentDiv.innerHTML = processedContent;
             }
         });
-
-        // Convert remaining newlines to <br> tags for plain text
-        // If content comes from <pre> tag's textContent, newlines will be literal \n
-        processedContent = processedContent.replace(/\n/g, '<br>');
-
-        contentDisplayDiv.innerHTML = processedContent;
-    });
 </script>
 {% endblock %}

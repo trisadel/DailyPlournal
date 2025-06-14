@@ -1,21 +1,127 @@
+/* CSS Variables for theming */
+:root {
+    --h3-color: #343a40;
+    --h1-color: #343a40;
+    --h1-border-bottom-color: #e9ecef;
+    --p-color:#343a40;
+    --content-bg: url("{{ url_for('static', filename='img/journalbg.jpeg') }}") !important;
+    --content-margin-left: 200px;
+    --content-collapsed-margin-left: 60px;
+    --journal-editor-bg: #fff;
+    --journal-editor-border: #ddd;
+    --journal-editor-box-shadow: rgba(0, 0, 0, 0.05);
+    --entry-content-display-color: #4a5568;
+
+    --typography-controls-bg: #eff2f7;
+    --control-box-label-color: #1d1b1b;
+    --control-box-input-border: #cdd4e0;
+
+    --textarea-bg: #fffbea;
+    --textarea-border: #ccc;
+    --textarea-gradient-color: #cfcfcf;
+    --textarea-box-shadow: rgba(0, 0, 0, 0.1);
+
+    --btn-primary-bg: #007bff;
+    --btn-primary-hover-bg: #0056b3;
+    --btn-danger-bg: #ff0000;
+    --btn-danger-hover-bg: #cc0000; /* Added for consistency */
+    --btn-text-color: white;
+
+    --sketchpad-section-bg: #fcfcfc;
+    --sketchpad-section-border: #ddd;
+    --h3-color: #343a40;
+    --sketchpad-bg: #fff;
+
+    --sketch-display-area-bg: #f9f9f9;
+    --sketch-display-area-border: #ccc;
+
+    --mode-selection-button-border: #007bff;
+    --mode-selection-button-bg: #f0f8ff;
+    --mode-selection-button-color: #007bff;
+    --mode-selection-button-active-bg: #007bff;
+    --mode-selection-button-active-color: white;
+    --mode-selection-button-hover-bg: #e0f0ff;
+}
+
+body[data-theme="dark"] {
+    --h3-color: #e0e0e0;
+    --h1-color: #e0e0e0;
+    --h1-border-bottom-color: #333;
+    --p-color: #e0e0e0;
+    --content-bg: url("{{ url_for('static', filename='img/darkjournalbg.jpeg') }}") !important;
+    --content-margin-left: 200px;
+    --content-collapsed-margin-left: 60px;
+    --journal-editor-bg:#444;
+    --journal-editor-border: #2a2a2a;
+    --journal-editor-box-shadow: rgba(0, 0, 0, 0.2);
+    --entry-content-display-color: #fffcfcee;
+
+    --typography-controls-bg: #3a3a3a;
+    --control-box-label-color: #e0e0e0;
+    --control-box-input-border: #666;
+
+    --textarea-bg: #33332a;
+    --textarea-border: #555;
+    --textarea-gradient-color: #555;
+    --textarea-box-shadow: rgba(0, 0, 0, 0.3);
+
+    --btn-primary-bg: #0056b3;
+    --btn-primary-hover-bg: #003f8a;
+    --btn-danger-bg: #cc0000;
+    --btn-danger-hover-bg: #990000;
+    --btn-text-color: #f0f0f0;
+
+    --sketchpad-section-bg: #333333;
+    --sketchpad-section-border: #555;
+    --sketchpad-text-h3-color: #f5f8fc;
+    --sketchpad-bg: #1a1a1a;
+
+    --sketch-display-area-bg: #2a2a2a;
+    --sketch-display-area-border: #555;
+
+    --mode-selection-button-border: #0056b3;
+    --mode-selection-button-bg: #2a3d4f;
+    --mode-selection-button-color: #6fa8dc;
+    --mode-selection-button-active-bg: #0056b3;
+    --mode-selection-button-active-color: #f0f0f0;
+    --mode-selection-button-hover-bg: #3d5a7a;
+}
+
+h3 {
+    color: var(--h3-color);
+}
+
+h1 {
+    color: var(--h1-color);
+}
+
+p {
+    color: var(--p-color);
+}
+
+.entry-content-display {
+    color: var(--entry-content-display-color);
+}
+
 .content {
     flex-grow: 1;
     padding: 20px;
-    margin-left: 200px;
+    margin-left: var(--content-margin-left);
     transition: margin-left 0.3s ease;
+    background-color: var(--content-bg); /* Apply background to content */
 }
 
 .content.collapsed {
-    margin-left: 60px;
+    margin-left: var(--content-collapsed-margin-left);
 }
 
 .journal-editor {
     max-width: 800px;
     margin: 0 auto;
     padding: 20px;
-    background-color: #fff;
-    border: 1px solid #ddd;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    background-color: var(--journal-editor-bg);
+    border: 1px solid var(--journal-editor-border);
+    box-shadow: 0 2px 5px var(--journal-editor-box-shadow);
 }
 
 .editor-container {
@@ -30,30 +136,32 @@
     gap: 15px; /* Smaller gap */
     margin-bottom: 20px;
     padding: 10px 15px;
-    background-color: #eff2f7; /* Slightly darker light background */
+    background-color: var(--typography-controls-bg);
     border-radius: 5px;
     align-items: center;
 }
 
 .control-box label {
     font-weight: 600; /* Slightly bolder labels */
-    color: #1d1b1b;
+    color: var(--control-box-label-color);
 }
 
 .control-box select,
 .control-box input[type="text"],
 .control-box input[type="number"] {
-    border: 1px solid #cdd4e0; /* Softer border color */
+    border: 1px solid var(--control-box-input-border);
     border-radius: 3px;
     padding: 7px; /* Slightly less padding */
     font-size: 0.95em; /* Slightly smaller font */
+    background-color: var(--journal-editor-bg); /* Input background matches editor */
+    color: var(--control-box-label-color); /* Input text color */
 }
 
 .control-box textarea {
     width: 100%;
     min-height: 300px;
     padding: 15px;
-    border: 1px solid #ccc;
+    border: 1px solid var(--textarea-border);
     border-radius: 5px;
 }
 
@@ -63,12 +171,13 @@ textarea {
     padding: 12px 16px;
     font-size: 18px;
     line-height: 28px;
-    border: 1px solid #ccc;
+    border: 1px solid var(--textarea-border);
     border-radius: 5px;
-    background-color: #fffbea;
-    background-image: repeating-linear-gradient(to bottom, transparent, transparent 23px, #cfcfcf 24px);
+    background-color: var(--textarea-bg);
+    background-image: repeating-linear-gradient(to bottom, transparent, transparent 23px, var(--textarea-gradient-color) 24px);
     font-family: "Courier New", Courier, monospace;
-    box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.1);
+    box-shadow: inset 0 0 3px var(--textarea-box-shadow);
+    color: var(--control-box-label-color); /* Textarea text color */
 }
 
 .btn-field {
@@ -80,8 +189,8 @@ textarea {
 .btn-field .button {
     padding: 10px 20px;
     border: none;
-    background-color: #007bff;
-    color: white;
+    background-color: var(--btn-primary-bg);
+    color: var(--btn-text-color);
     border-radius: 5px;
     cursor: pointer;
     text-decoration: none;
@@ -93,8 +202,8 @@ textarea {
 .btn-field .dltbutton {
     padding: 10px 20px;
     border: none;
-    background-color: #ff0000;
-    color: white;
+    background-color: var(--btn-danger-bg);
+    color: var(--btn-text-color);
     border-radius: 5px;
     cursor: pointer;
     text-decoration: none;
@@ -104,22 +213,27 @@ textarea {
 
 .btn-field button:hover,
 .btn-field .button:hover {
-    background-color: #0056b3;
+    background-color: var(--btn-primary-hover-bg);
+}
+
+.btn-field .dltbutton:hover { /* Specific hover for delete button */
+    background-color: var(--btn-danger-hover-bg);
 }
 
 /* Styles for sketchpad */
 .sketchpad-section {
     margin-top: 30px;
-    border: 1px solid #ddd;
+    border: 1px solid var(--sketchpad-section-border);
     padding: 15px;
     border-radius: 8px;
-    background-color: #fcfcfc;
+    background-color: var(--sketchpad-section-bg);
 }
 .sketchpad-controls-top, .sketchpad-controls-bottom {
     display: flex;
     gap: 15px;
     margin-bottom: 15px;
     align-items: center;
+    color: var(--control-box-label-color); /* Control text color */
 }
 .sketchpad-controls-bottom {
     margin-top: 15px;
@@ -127,21 +241,28 @@ textarea {
 #sketchpad {
     display: block; /* Ensures canvas takes full width and new line */
     margin: 0 auto; /* Center the canvas */
-    background-color: #fff; /* Ensure white background for drawing */
+    background-color: var(--sketchpad-bg); /* Ensure white background for drawing */
 }
 /* For displaying sketchpad in view_journal.html */
     .sketch-display-area {
-        margin-top: 20px;
-        padding: 10px;
+        margin-top: 10px; /* Adjusted margin */
+        padding: 5px; /* Adjusted padding */
         border: 1px dashed #ccc;
         background-color: #f9f9f9;
-        text-align: center; /* Center the image */
+        text-align: center;
+        max-width: 100%; /* Ensure it fits within the container */
+        overflow: hidden; /* Hide overflow if image is too large */
     }
     .sketch-display-area img {
-        display: block; /* Ensure image takes full width of its container if needed */
-        margin: 0 auto; /* Center the image horizontally */
+        max-width: 100%;
+        height: auto;
+        display: block;
+        margin: 0 auto;
     }
-
+    .no-content-message {
+        color: #888;
+        font-style: italic;
+    }
     .mode-selection {
         margin-bottom: 20px;
         text-align: center;
@@ -149,18 +270,18 @@ textarea {
     .mode-selection button {
         padding: 10px 20px;
         margin: 0 5px;
-        border: 1px solid #007bff;
-        background-color: #f0f8ff;
-        color: #007bff;
+        border: 1px solid var(--mode-selection-button-border);
+        background-color: var(--mode-selection-button-bg);
+        color: var(--mode-selection-button-color);
         border-radius: 5px;
         cursor: pointer;
         font-size: 1em;
         transition: background-color 0.3s, color 0.3s;
     }
     .mode-selection button.active {
-        background-color: #007bff;
-        color: white;
+        background-color: var(--mode-selection-button-active-bg);
+        color: var(--mode-selection-button-active-color);
     }
     .mode-selection button:hover:not(.active) {
-        background-color: #e0f0ff;
+        background-color: var(--mode-selection-button-hover-bg);
     }
