@@ -544,6 +544,13 @@ def delete_custom_section():
     else:
         return jsonify({'status': 'error', 'message': 'Custom section not found'}), 404
 
+@app.route('/musicplayer/')
+def musicplayer():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))  # Or handle unauthenticated access as you prefer
+    user = User.query.get(session['user_id'])
+    current_streak = user.streak.current_streak if user.streak else 0
+    return render_template('musicplay.html', user=user, current_streak=current_streak)
 
 @app.route('/check_login/')  # New route to check login status
 def check_login():
